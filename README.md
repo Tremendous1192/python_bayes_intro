@@ -1,3 +1,6 @@
+# Fork of python_bayes_intro
+書籍『Pythonでスラスラわかる ベイズ推論「超」入門』の学習リポジトリ
+
 # 書籍『Pythonでスラスラわかる ベイズ推論「超」入門』サポートサイト
 
 <div align="left">
