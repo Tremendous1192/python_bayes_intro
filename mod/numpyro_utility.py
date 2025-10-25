@@ -2,20 +2,12 @@
 
 # ---- import ----
 # DataFrame
-import polars as pl
-import numpy as np
+#import polars as pl
+#import numpy as np
 import jax
-import jax.numpy as jnp
-import jax.random as random
 
 # ベイズ推定
 import numpyro
-#from numpyro import render_model, plate
-import numpyro.distributions as dist
-from numpyro.infer import MCMC, NUTS, Predictive
-
-# Plot
-import arviz as az
 
 
 def try_render_model(model, render_name : str, **model_args):
@@ -81,10 +73,10 @@ def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinn
     mcmc : MCMC
         MCMCインスタンス
     """
-    sampler = NUTS(model)
+    sampler = numpyro.infer.NUTS(model)
     num_devices = jax.local_device_count()
     chain_method = "parallel" if num_devices >= num_chains else "sequential"
-    mcmc = MCMC(
+    mcmc = numpyro.infer.MCMC(
         sampler = sampler,
         num_warmup = num_warmup,
         num_samples = num_samples,
@@ -93,5 +85,5 @@ def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinn
         chain_method = chain_method,
         progress_bar = True,
     )
-    mcmc.run(random.PRNGKey(seed), **model_args)
+    mcmc.run(jax.random.PRNGKey(seed), **model_args)
     return mcmc
