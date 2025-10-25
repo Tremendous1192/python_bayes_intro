@@ -46,7 +46,7 @@ def try_render_model(model, render_name : str, **model_args):
         print(f"(Skip model rendering for {render_name}: {e})")
 
 
-def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinning = 1, seed = 42, **model_args):
+def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinning = 1, seed = 42, target_accept_prob = 0.8, **model_args):
     """
     NumPyroのベイズ統計モデルでサンプリングする
 
@@ -73,7 +73,7 @@ def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinn
     mcmc : MCMC
         MCMCインスタンス
     """
-    sampler = numpyro.infer.NUTS(model)
+    sampler = numpyro.infer.NUTS(model, target_accept_prob = target_accept_prob)
     num_devices = jax.local_device_count()
     chain_method = "parallel" if num_devices >= num_chains else "sequential"
     mcmc = numpyro.infer.MCMC(
