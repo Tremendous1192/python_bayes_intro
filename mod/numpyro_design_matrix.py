@@ -1,4 +1,4 @@
-# ---- NumPyroを使ったベイズ統計のモジュール ----
+# ---- NumPyroを使った計画行列ベイズ推定のモジュール ----
 
 # ---- import ----
 # DataFrame
@@ -20,89 +20,7 @@ import arviz as az
 # 型アノテーション
 from typing import List
 
-# ---- 汎用的なモジュール ----
-# ---- モデルの可視化・サンプリング ----
-def try_render_model(model, render_name : str, **model_args):
-    """
-    ベイズ統計モデルを可視化する
 
-    Parameters
-    ----------
-    model: NumPyro model
-        ベイズ統計モデル
-    render_name : str
-        可視化したモデルのファイル名
-    model_args: Any args
-        モデルの引数
-    """
-    try:
-        # 確率モデルを作成する
-        g = numpyro.render_model(
-            model = model,
-            model_args = (),
-            model_kwargs = model_args,
-            render_distributions = True,
-            render_params = True
-        )
-        # 確率モデルの画像を保存する
-        outpath = f"{render_name}.svg"
-        g.render(render_name, format = "svg", cleanup = True)
-        print(f"Model graph saved to: {outpath}")
-        # Jupyter なら表示、スクリプトならファイル出力のみ
-        try:
-            from IPython.display import display, SVG
-            display(SVG(filename=outpath))
-        except Exception:
-            print("Model graph saved to hier_model.svg")
-    except Exception as e:
-        print(f"(Skip model rendering for {render_name}: {e})")
-
-
-def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinning = 1, seed = 42, **model_args):
-    """
-    NumPyroのベイズ統計モデルのサンプリングを実行する。
-
-    Parameters
-    ----------
-    model : NumPyro model
-        ベイズ統計モデル
-    num_chains : uint
-        サンプリングのチェーン数
-    num_warmup : uint
-        推定に使用しないMCMCサンプル数
-    num_samples :uint
-        推定に使用するMCMCサンプル数
-    thinning : uint
-        num_samples のMCMCサンプルをさらに間引く係数。
-    seed : uint
-        乱数シード
-    model_args: any variable
-        モデル特有の変数。
-        データ数 N や特徴量X, 目的変数y など
-
-    Returns
-    -------
-    mcmc : MCMC
-        MCMCインスタンス
-    """
-    sampler = NUTS(model)
-    num_devices = jax.local_device_count()
-    chain_method = "parallel" if num_devices >= num_chains else "sequential"
-    mcmc = MCMC(
-        sampler = sampler,
-        num_warmup = num_warmup,
-        num_samples = num_samples,
-        num_chains = num_chains,
-        thinning = thinning,
-        chain_method = chain_method,
-        progress_bar = True,
-    )
-    mcmc.run(random.PRNGKey(seed), **model_args)
-    return mcmc
-
-
-# ---- 計画行列を使用する場合のモジュール ----
-# ---- 前処理 ----
 def make_jax_design_matrix( df, target_col: str, cat_cols: List[str], num_cols: List[str] ):
     """
     NumPyroのベイズ統計モデルに渡すための計画行列や目的変数を作成する
@@ -163,7 +81,6 @@ def make_jax_design_matrix( df, target_col: str, cat_cols: List[str], num_cols: 
     return X, y, feature_cols
 
 
-# ---- 事後予測分布を計算する ----
 def compute_posterior_predictive_distribution(model, feature_cols, mcmc, N, **model_args):
     """
     モデルの事後予測分布を計算する
