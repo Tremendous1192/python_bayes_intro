@@ -9,6 +9,9 @@ import jax
 # ベイズ推定
 import numpyro
 
+# plot
+import arviz as az
+
 
 def try_render_model(model, render_name : str, **model_args):
     """
@@ -46,7 +49,7 @@ def try_render_model(model, render_name : str, **model_args):
         print(f"(Skip model rendering for {render_name}: {e})")
 
 
-def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinning = 1, seed = 42, target_accept_prob = 0.8, **model_args):
+def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinning = 1, seed = 42, target_accept_prob = 0.8, log_likelihood = False, **model_args):
     """
     NumPyroのベイズ統計モデルでサンプリングする
 
@@ -86,4 +89,5 @@ def run_mcmc(model, num_chains = 4, num_warmup = 1000, num_samples = 1000, thinn
         progress_bar = True,
     )
     mcmc.run(jax.random.PRNGKey(seed), **model_args)
-    return mcmc
+    idata = az.from_numpyro(mcmc, log_likelihood = log_likelihood)
+    return idata
