@@ -55,15 +55,15 @@
 <path fill="none" stroke="black" d="M71.35,-113.26C75.58,-105.05 80.81,-94.87 85.58,-85.59"/>
 <polygon fill="black" stroke="black" points="88.54,-87.49 90,-76.99 82.32,-84.29 88.54,-87.49"/>
 </g>
-<!-- ε -->
+<!-- σ -->
 <g id="node4" class="node">
-<title>ε</title>
+<title>σ</title>
 <ellipse fill="white" stroke="black" cx="135" cy="-130.5" rx="27" ry="18"/>
-<text xml:space="preserve" text-anchor="middle" x="135" y="-125.45" font-family="Times New Roman,serif" font-size="14.00">ε</text>
+<text xml:space="preserve" text-anchor="middle" x="135" y="-125.45" font-family="Times New Roman,serif" font-size="14.00">σ</text>
 </g>
-<!-- ε&#45;&gt;Y -->
+<!-- σ&#45;&gt;Y -->
 <g id="edge4" class="edge">
-<title>ε&#45;&gt;Y</title>
+<title>σ&#45;&gt;Y</title>
 <path fill="none" stroke="black" d="M126.65,-113.26C122.42,-105.05 117.19,-94.87 112.42,-85.59"/>
 <polygon fill="black" stroke="black" points="115.68,-84.29 108,-76.99 109.46,-87.49 115.68,-84.29"/>
 </g>
@@ -73,7 +73,7 @@
 <text xml:space="preserve" text-anchor="start" x="151.62" y="-257.7" font-family="Times New Roman,serif" font-size="14.00">ω0 ~ Normal</text>
 <text xml:space="preserve" text-anchor="start" x="151.62" y="-241.2" font-family="Times New Roman,serif" font-size="14.00">ω1 ~ Normal</text>
 <text xml:space="preserve" text-anchor="start" x="151.62" y="-224.7" font-family="Times New Roman,serif" font-size="14.00">μ ~ Deterministic</text>
-<text xml:space="preserve" text-anchor="start" x="151.62" y="-208.2" font-family="Times New Roman,serif" font-size="14.00">ε ~ HalfNormal</text>
+<text xml:space="preserve" text-anchor="start" x="151.62" y="-208.2" font-family="Times New Roman,serif" font-size="14.00">σ ~ HalfNormal</text>
 <text xml:space="preserve" text-anchor="start" x="151.62" y="-191.7" font-family="Times New Roman,serif" font-size="14.00">Y ~ Normal</text>
 </g>
 </g>
