@@ -1,15 +1,16 @@
 # uv利用手順
 
-作成日・検証日: 2026-09-26 JST。
-Windows 11 AMD64、uv 0.11.7、通常のGIL付きCPython 3.14.7で確認した手順です。
-構成・採用バージョン・検証結果は[README](README.md)を参照してください。
-この環境はNotebook専用です。conda環境の作成、`conda init`、PyInstallerは不要です。
+uvで、このプロジェクトのPythonとライブラリを準備します。
+初回は第1～4節、準備済みなら新しいターミナルで第1節を実行してから[marimo利用手順](marimo_HowToUse.md)へ進んでください。
 
-## 1. VS CodeのCommand Promptを準備する
+確認済みの構成（2026-09-26）：Windows 11 AMD64 / uv 0.11.7 / CPython 3.14.7（GIL有効）。
+採用バージョンと検証記録は[README](README.md)にあります。
 
-VS Codeで`Terminal: Select Default Profile`から`Command Prompt`を選び、
-新しい統合ターミナルを開きます。以下のコマンドはすべて`cmd.exe`用です。
-環境変数はこのターミナルと子プロセスだけに設定し、`setx`やシステム設定は使いません。
+## 1. ターミナルを準備する（毎回）
+
+VS Codeの`Terminal: Select Default Profile`で`Command Prompt`を選び、新しいターミナルを開きます。
+**以下をまとめて実行してください。** 別のPython環境の設定を外し、保存先とスレッド数を揃えます。
+設定はこのターミナルと子プロセスにだけ有効です。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
@@ -71,24 +72,21 @@ dot -V
 g++ --version
 ```
 
-`uv`は導入済みのものを使用します。今回の作業では更新していません。
-`dot`はPythonパッケージ`graphviz`とは別の実行ファイルです。
-この端末ではGraphviz 13.1.2とMinGW g++ 16.1.0を確認しました。
-別端末で不足している場合は導入先・権限を確認し、Python依存の変更で代用しないでください。
+`uv`、Graphviz本体（`dot`）、MinGW（`g++`）は導入済みのものを使います。
+この端末の確認版は、それぞれ0.11.7、13.1.2、16.1.0です。
+見つからない場合は導入先を確認してください。Pythonパッケージの`graphviz`だけでは`dot`は入りません。
 
-## 2. Python 3.14.7を明示的に導入する
+## 2. Pythonを導入する（初回のみ）
 
-この端末のuv 0.11.7には3.14.7の配布情報が内蔵されていません。
-uv本体を更新せず、2026-09-24のAstral公式コミットに固定した配布カタログを使用します。
-取得するPythonはCPython 3.14.7、Windows x86_64、通常のGIL付き、ビルド20260924です。
+Python 3.14.7を導入済みなら、第3節へ進みます。
+uv 0.11.7にこの版の配布情報がないため、固定したAstral公式カタログを使います。
 
 ```cmd
 curl.exe --fail --location --connect-timeout 15 --max-time 120 --output .cache\python-downloads.json https://raw.githubusercontent.com/astral-sh/uv/299a93de4b94e754f260c673d2de456afbdd4fb7/crates/uv-python/download-metadata.json
 certutil -hashfile .cache\python-downloads.json SHA256
 ```
 
-カタログのSHA-256が以下と一致することを確認してから次へ進みます。
-取得失敗・不一致の場合は導入を止め、URLと通信状態を確認してください。
+SHA-256が次の値と一致したら、導入へ進みます。取得失敗や不一致の場合は止めてください。
 
 ```text
 016746da52b4558782e2e71e621c682db786a0d07025a5b67bdac08c668f1aa2
@@ -103,11 +101,21 @@ set "UV_PYTHON_DOWNLOADS=never"
 .cache\python\cpython-3.14.7-windows-x86_64-none\python.exe -I -B -c "import sys; print(sys.version); print(sys.executable)"
 ```
 
-`--no-bin`と`--no-registry`により、共通のPythonコマンドやWindowsレジストリへ登録しません。
-Python配布物のSHA-256は公式カタログに含まれ、uvが照合します。
-今回の配布物は`1493fc4185edf84bbd4305c15c5fbac2d4fcd4ddd7eb6273903669a5d3106178`です。
+共通のPythonコマンドやWindowsレジストリには登録しません。
+取得先はプロジェクト内の`.cache/python/`です。
 
-## 3. ロック済み環境を復元する
+<details>
+<summary>Python配布物の詳細</summary>
+
+CPython 3.14.7 / Windows x86_64 / GIL有効 / Astralビルド20260924。
+配布物のSHA-256は`1493fc4185edf84bbd4305c15c5fbac2d4fcd4ddd7eb6273903669a5d3106178`で、
+uvがカタログの値と照合します。
+
+</details>
+
+## 3. ライブラリを揃える（初回・環境の復元時）
+
+`uv.lock`に記録された版を、このプロジェクトの`.venv`へ導入します。
 
 ```cmd
 uv lock --check
@@ -115,60 +123,29 @@ uv sync --locked --group notebook --python .cache\python\cpython-3.14.7-windows-
 uv run --locked --group notebook python -c "import sys, platform; print(sys.executable); print(sys.version); print(platform.machine()); assert sys.version_info[:3] == (3, 14, 7); assert sys._is_gil_enabled()"
 ```
 
-実行先は`C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe`になります。
-`notebook`グループは明示指定が必要です。marimoを使うときも同じ指定を続けます。
-`uv sync`は対象環境を依存定義へ合わせるため、別用途のパッケージをこの`.venv`へ混在させません。
-`pip install`や`uv pip install`による未記録の追加、`--frozen`だけの検証は行いません。
-
-`.cache/python`には`.venv`が参照するPython本体があります。
-環境の使用中に`.cache`全体を削除・移動すると起動できなくなります。
-別の配置へ移す場合は、元のNotebookを保全して実行系と仮想環境を作り直します。
-
-## 4. VS Codeとmarimoを起動する
-
-VS Codeの`Python: Select Interpreter`で、次の実行ファイルを選択します。
+出力されたPythonの場所が次のパスで、版が3.14.7なら準備完了です。
 
 ```text
 C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
 ```
 
-marimo拡張機能を使用する場合も、このプロジェクトの実行系を選びます。
-拡張機能が別プロセスを起動するとターミナルの環境変数を継承しない場合があるため、
-保存先を確実に揃える起動方法は、以下の統合ターミナルからのコマンドです。
+marimoを使うときは`--locked --group notebook`を付けます。
+依存追加は第5節の手順で行い、`pip install`やセルからの自動インストールは使いません。
 
-Windows版marimo 0.25.0では履歴などの一部がユーザープロファイル配下に保存されます。
-子`cmd.exe`の`USERPROFILE`だけを作業用ディレクトリに設定します。
-Windowsのアカウント設定、親ターミナルのプロファイル、既存の個人設定は変更しません。
+**`.cache/python/`にはPython本体があります。** `.cache`全体を削除・移動しないでください。
+配置を変える場合はNotebookを保全し、Pythonと仮想環境を作り直します。
 
-```cmd
-rem marimo専用の作業用プロファイルを、未作成の場合だけ用意する。
-if not exist "%BAYES_PROJECT%\.cache\marimo-profile" mkdir "%BAYES_PROJECT%\.cache\marimo-profile"
-cmd.exe /d /c "set USERPROFILE=%BAYES_PROJECT%\.cache\marimo-profile&& uv run --locked --group notebook marimo edit --headless --no-sandbox --host 127.0.0.1"
-```
+## 4. marimoを開く
 
-ターミナルに表示されたURLをブラウザーで開きます。認証トークン付きURLは共有しません。
-`--headless`はブラウザーの自動起動を止めます。`--no-sandbox`はプロジェクト環境を使用する指定です。
-停止するときは、そのターミナルで`Ctrl+C`を押します。
+VS Codeの`Python: Select Interpreter`で、第3節のPythonを選びます。
+続いて、[marimo利用手順](marimo_HowToUse.md)の第2節でNotebookを開いてください。
 
-新しいNotebookを作る場合の例です。`first_notebook.py`は未作成の例示名です。
+起動には、第1節を実行した統合ターミナルを使います。
+marimo拡張機能からの起動では、ターミナルの保存先設定を引き継がない場合があります。
 
-```cmd
-cmd.exe /d /c "set USERPROFILE=%BAYES_PROJECT%\.cache\marimo-profile&& uv run --locked --group notebook marimo edit first_notebook.py --headless --no-sandbox --host 127.0.0.1"
-```
+## 5. 確認・ライブラリの変更
 
-セル内でも実行系を確認できます。
-
-```python
-# サーバーの起動元だけでなく、実際にセルを実行するPythonを確認する。
-import sys
-print("Python executable:", sys.executable)
-print("Python version:", sys.version)
-```
-
-Jupyter、`uvx`、`--with`、Notebook内のインストール処理は、この環境の依存管理に使用しません。
-書籍Notebookの移植時は、重いサンプリングセルの再実行条件も明示してください。
-
-## 5. 確認・依存変更に使うコマンド
+いずれも第1節を実行したターミナルで使います。環境の確認コマンドは次のとおりです。
 
 ```cmd
 uv lock --check
@@ -176,12 +153,12 @@ uv run --locked --group notebook marimo --version
 uv run --locked --group notebook python -c "import numpy, polars, pandas, scipy, torch, pymc, nutpie, arviz, numba, graphviz, openpyxl, matplotlib_fontja; print('Imports passed')"
 ```
 
-依存変更は次の順で行います。
+ライブラリを変更するときは、次の順に進めます。
 
-1. 2026-09-26 JST以前の安定版とWindows/Python互換性を公式情報で確認します。
-2. `pyproject.toml`の対象依存を変更し、採用理由をREADMEへ記録します。
-3. 次のコマンドでロックを再生成・確認・同期します。
-4. 変更されたライブラリの描画・数値処理・Notebookを、新しいセッションから確認します。
+1. 2026-09-26 JST以前の安定版から、WindowsとPythonの対応を確認します。
+2. `pyproject.toml`を変更し、採用版と理由をREADMEに記録します。
+3. 次のコマンドでロックを更新し、環境へ反映します。
+4. 影響する計算・描画・Notebookを新しいセッションで確認します。
 
 ```cmd
 uv lock
@@ -189,30 +166,21 @@ uv lock --check
 uv sync --locked --group notebook
 ```
 
-`uv.lock`は手編集しません。初回生成はuv 0.11.7で実行し、1,025行・83パッケージになりました。
-`exclude-newer`は2026-09-26 JSTの終了境界を固定し、個々の配布物の公開日時を制限します。
-直接依存の版も固定しています。基準日を変える更新は、別の要件変更として扱います。
+`uv.lock`はuvが生成するため、手編集しません。
+`exclude-newer`は2026-09-26 JSTの終了時点までの配布物に制限しています。
+この基準日やPythonの版を変える場合は、環境の要件も見直してください。
 
-## 6. 問題の切り分けと検証範囲
+## 6. 困ったとき
 
-| 症状 | 確認する内容 |
+| 症状 | 確認すること |
 | --- | --- |
-| marimo起動時のDLLエラー、別Pythonの標準ライブラリを参照 | 手順1で`PYTHONHOME`と`PYTHONPATH`を解除し、`sys.executable`を再確認する。今回実際に検出・解消した問題。 |
-| Python 3.14.7が見つからない | 固定カタログと`UV_PYTHON_INSTALL_DIR`を確認する。3.13へ置き換えない。 |
-| Python downloads are not allowed | 明示的な導入時だけ`UV_PYTHON_DOWNLOADS=manual`とし、終了後に`never`へ戻す。 |
-| lockとmanifestの不一致 | 意図した変更か確認してから`uv lock`で更新する。`--frozen`で回避しない。 |
-| Graphviz実行失敗 | 同じターミナルで`dot -V`を確認する。Python版`graphviz`だけでは本体は入らない。 |
-| PyTensorのコンパイラ警告 | 同じターミナルの`g++ --version`と実際の数値実行を確認する。コンパイラを自動追加しない。 |
-| 旧書籍の描画・推論APIで失敗 | PyMC 6／ArviZ 1のAPI移行を行う。今回の環境準備は16本の移植完了を意味しない。 |
-| 外部CSV・Excelの取得失敗 | 元URL、通信、保存先を確認する。完全オフライン対応は今回の対象外。 |
-
-今回、合成データによるExcel読込、型を明示したPolars処理、PyTorchのCPU自動微分、
-Numbaと非JIT結果の比較、Matplotlib/Seaborn/Graphviz描画を確認しました。
-PyMCとnutpieは同じBeta-Bernoulliモデルを各2 chains・400 tune・600 draws、`cores=1`、
-`random_seed=42`で実行し、事後平均が解析解`2/7`との差`0.06`未満であることを確認しました。
-marimoは新規プロセスのNotebook実行と、認証付きHTTP起動・終了APIによる正常終了を確認しました。
-検証用コードと画像はGit対象外の`.cache/validation`にあり、キャッシュ削除後の存在は保証しません。
-VS Code GUIの操作確認、ブラウザーでのセル編集、移植元16本の全実行は未実施です。
+| DLLエラー・別のPythonが動く | 第1節で`PYTHONHOME`・`PYTHONPATH`を解除し、`sys.executable`を確認 |
+| Python 3.14.7が見つからない | 第2節の固定カタログと`UV_PYTHON_INSTALL_DIR`を確認 |
+| `Python downloads are not allowed` | 明示的な導入時だけ`UV_PYTHON_DOWNLOADS=manual`にし、終了後は`never`へ戻す |
+| lockと依存定義が合わない | 意図した変更か確認してから`uv lock`。`--frozen`では回避しない |
+| Graphvizが動かない | 同じターミナルで`dot -V`を確認 |
+| PyTensorのコンパイラ警告 | `g++ --version`と数値計算の結果を確認 |
+| 旧API・CSV・Excelで失敗する | 元NotebookのAPIや取得先を確認。書籍16本の移植は未実施 |
 
 ## 参考資料
 
@@ -220,5 +188,3 @@ VS Code GUIの操作確認、ブラウザーでのセル編集、移植元16本�
 - [uvのPython導入](https://docs.astral.sh/uv/guides/install-python/)
 - [uvのロックと同期](https://docs.astral.sh/uv/concepts/projects/sync/)
 - [uvの公開日時制限](https://docs.astral.sh/uv/concepts/resolution/#reproducible-resolutions)
-- [marimoのプロジェクト環境](https://docs.marimo.io/guides/package_management/projects/)
-- [marimoの設定](https://docs.marimo.io/guides/configuration/)
