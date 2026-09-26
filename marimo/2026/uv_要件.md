@@ -1,0 +1,47 @@
+# 目的
+`Pythonでスラスラわかる　ベイズ推論「超」入門, 赤石雅典・著　須山敦志・監修` のプログラムを、ローカル環境(VS Code + uv + marimo)で作成したい。
+`C:\dev\python_bayes_intro\notebooks` と `C:\dev\python_bayes_intro\sample-notebooks` の内容を書きなおしたい。
+ただし、`sample-notebooks/6_3_IRTによるテスト結果評価_GPU版.ipynb` は移植対象外とし、本編11本・参考5本の計16本を対象とする。
+## 参考書籍URL
+* Pythonでスラスラわかる　ベイズ推論「超」入門, 赤石雅典・著　須山敦志・監修
+    * https://www.kspub.co.jp/book/detail/5337639.html
+
+
+# Codexへの依頼
+目的のための準備です。
+1. uv の環境設定ファイルを作成してください。
+    * `C:\dev\python_bayes_intro\marimo\2026\pyproject.toml`
+1. `C:\dev\python_bayes_intro\marimo\2026\uv_HowToUse.md` にuvの使い方・コマンドを書いてください。
+1. 作成したファイルに、人間が理解できるようにコメントを加筆してください
+
+
+# uv環境の要件
+* Python >=3.14
+* `C:\dev\python_bayes_intro\marimo\2026\.venv\` とする
+## ライブラリ
+* 2026-09-26時点の最新安定版を原則とする。
+* 依存関係に不整合がある場合は、Python・OSの要件を維持したうえで、同日以前に公開された互換性のある安定版へ調整できる。
+* 採用バージョンと、調整した場合の理由を記録する。
+### ノートブック
+* marimo
+### プロット
+* matplotlib
+* matplotlib-fontja
+* seaborn
+### ベイズ推論
+* pymc
+* nutpie
+* arviz
+### その他
+* numpy
+* polars
+* pandas
+* scipy
+* torch
+* graphviz
+* numba
+### (Must Not)このフォルダでは使用しないライブラリ
+* japanize_matplotlib
+* bambi
+* numpyro
+

@@ -1,0 +1,17 @@
+# uvが作成する仮想環境は端末ごとに再作成するため、Gitでは管理しない。
+.venv/
+
+# 作成日: 2026-09-26。キャッシュ・検証出力・端末固有設定を除外する。
+# uv.lockと依存の原本は共有し、環境復元にはuv_HowToUse.mdの手順を使う。
+.cache/
+__pycache__/
+*.py[cod]
+
+# marimoが保存する実行履歴と、プロジェクト内の個人設定は共有しない。
+__marimo__/
+.marimo.toml
+
+# 検証ツールを使用した場合の一時結果を除外する。
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
