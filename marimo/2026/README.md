@@ -3,10 +3,19 @@
 作成日・検証日: 2026-09-26 JST。
 書籍『Pythonでスラスラわかる ベイズ推論「超」入門』のコードを、
 VS Code・uv・marimoで学習するためのNotebook専用環境です。
-[要件書](uv_要件.md)に基づく環境準備を実装しました。
+[uv要件書](uv_要件.md)に基づく環境準備と、
+[marimo要件書](marimo_要件.md)に基づく操作手順・フォルダ説明を整備しています。
 本編11本・参考5本の書換えは後続作業であり、このフォルダに移植済みNotebookはまだありません。
 
-最初に[uv利用手順](uv_HowToUse.md)の環境変数とPython導入手順を実行してください。
+## 読む順序
+
+1. 初回は[uv利用手順](uv_HowToUse.md)の第1～3節で、環境設定・Python導入・依存の復元を行います。
+2. 構築済みの環境では、新しいターミナルごとにuv利用手順の第1節の環境変数を設定します。
+3. [marimo利用手順](marimo_HowToUse.md)で、Notebookの作成・編集・保存・実行・終了を確認します。
+4. 同手順の平均計算・表・グラフの例でセルの連動を確認し、重い推論の実行制御を学びます。
+
+uv利用手順は環境の導入・維持、marimo利用手順は日常の操作、本READMEは構成と確認範囲を説明します。
+`first_notebook.py`は利用者が作る例示名であり、このフォルダに配布済みの教材ではありません。
 環境設定を省略した裸の`uv run`では、保存先の制限や別Python環境の継承防止を保証できません。
 上位の`/python_bayes_intro/marimo/README.md`にあるconda手順は、このuv環境では使用しません。
 
@@ -20,15 +29,17 @@ VS Code・uv・marimoで学習するためのNotebook専用環境です。
 | [.python-version](.python-version) | 実行するCPythonを3.14.7に固定 | 対象 |
 | [uv.lock](uv.lock) | uvが生成した間接依存・配布物ハッシュを含む解決結果 | 対象 |
 | [uv_HowToUse.md](uv_HowToUse.md) | VS Codeのcmd.exeで行う導入・実行・更新・切分け | 対象 |
-| [uv_要件.md](uv_要件.md) | ユーザー管理の要件書。今回の実装では変更していない | 対象 |
+| [marimo_HowToUse.md](marimo_HowToUse.md) | セル操作、コメント付きの小さな例、依存関係、実行制御、保存・終了 | 対象 |
+| [uv_要件.md](uv_要件.md) | ユーザー管理の環境準備の要件書 | 対象 |
+| [marimo_要件.md](marimo_要件.md) | ユーザー管理のmarimo操作手順とフォルダ説明の要件書 | 対象 |
 | `.venv/` | このプロジェクトだけに使う仮想環境 | 除外 |
 | `.cache/python/` | uvが導入したPython本体。`.venv`から参照される | 除外 |
 | `.cache/`のその他 | uv・描画・JITのキャッシュ、一時ファイル、marimoの設定・ログ | 除外 |
-| `.cache/validation/` | 今回の使い捨て検証Notebook、検証コード、描画出力 | 除外 |
+| `.cache/validation/` | 環境準備・操作手順の使い捨て検証Notebook、検証コード、描画出力 | 除外 |
 
 除外は既存の`/python_bayes_intro/marimo/.gitignore`を使用しています。
 `.cache/python`を使用中に削除すると仮想環境が起動できなくなるため、単なる描画キャッシュと区別します。
-ユーザーの未コミット変更、移植元Notebook、上位README、保護対象のAGENTS.mdは変更していません。
+今回の操作手順整備では、要件書、移植元Notebook、上位README、保護対象のAGENTS.mdは変更していません。
 
 ## 実行環境と再現性
 
@@ -138,8 +149,9 @@ Iris、`test_scores.csv`、IRTのCSV、書籍評価のExcelには外部取得処
 後続の移植で取得元・保存先・失敗時の処理を明示し、ダウンロード先をプロジェクト内に限定します。
 今回、実データの取得・同梱や完全オフライン対応は行っていません。
 
-## 検証結果
+## 検証結果（uv環境準備時の記録）
 
+以下は環境準備時の検証記録です。今回の操作手順整備で全項目を再実行したものではありません。
 使い捨てのNotebookと合成データを使用し、新しいプロセスから確認しました。
 サンプリングは各2 chains、400 tune、600 draws、`cores=1`、`random_seed=42`です。
 BLAS・OpenMP・Numba・Polarsは各2スレッドを上限として実行しました。
@@ -165,7 +177,50 @@ BLAS・OpenMP・Numba・Polarsは各2スレッドを上限として実行しま�
 Numbaの計測は性能比較の根拠には使用していません。
 小規模な推論の成功は、16本すべての数値結果・実行時間・API互換性の保証ではありません。
 
-## 実装時に解消した点
+## marimo利用手順の検証
+
+操作手順整備は、Task 1（利用手順作成）、Task 2（本README更新）、
+Task 3（検証と修正）を統合せず、この順で実施しました。各Taskの変更は10,000行以下です。
+検証対象は`marimo_HowToUse.md`の第4節の基本6セルと、第6節の追加2セルです。
+乱数や外部データを使わず、観測数10の平均5.5、20の平均10.5を確認基準にします。
+
+| 判定 | 確認内容 | 結果・手順 |
+| --- | --- | --- |
+| Passed | ロック・実行系 | `UV_OFFLINE=1`で`uv lock --check`成功。uv 0.11.7、CPython 3.14.7、GIL有効、marimo 0.25.0を確認 |
+| Passed | 掲載セルの静的検査 | 文書から基本6セル・追加2セルを抽出し、生成した2本に`marimo check`を実行。エラー・警告なし |
+| Passed | 新規プロセスでの5ケース | 基本例の10個・20個、ボタン未押下の10個・20個、押下相当の20個を確認。平均5.5／10.5が一致 |
+| Passed | 表・グラフ・停止条件 | 表オブジェクト、Figureの系列・平均線・軸ラベルを確認。未押下時は計算結果を定義せず停止。20個や押下状態は入力値の差替えで模擬 |
+| Passed | ローカルHTTP | 上記uv環境のPythonから`edit`と`run`を起動し、認証付きHTTP 200を確認。`edit`は終了APIと終了コード0も確認 |
+| Passed | 文書整合性 | 相対リンクの参照先、CLIオプション、cmdの環境設定・静的検査コマンド、保存先を確認 |
+| Not run | VS Code・ブラウザーの手動操作、描画の目視 | 利用手順の第2～4節で作成・保存・入力変更、第6節でボタン操作、第8節で`Ctrl+C`による終了・再開を確認する |
+| Not applicable | 書籍16本の移植・全実行、EXE・GPU検証 | 今回は操作手順とフォルダ説明の整備 |
+
+検証コードと生成物は`.cache/validation/marimo-guide-20260926/`に保存しました。
+生成元は`marimo_HowToUse.md`のPythonセル、生成器は同フォルダの`test_guide.py`、
+生成先は`basic_example.py`（66行）と`button_example.py`（84行）です。
+marimo 0.25.0のセル枠へ掲載コードを挿入し、生成・検査・実行まで完了しました。
+`run_validation.cmd`は、uv利用手順の設定と`test_guide.py launcher`から生成しています。
+この端末のcmdで日本語コメントが誤解釈されたため、説明は原本に残し、実行用cmdはASCII・CRLFとしました。
+
+次のコマンドは検証ファイルが残っている場合の再実行用です。各ファイルはGit対象外であり、
+キャッシュ削除後の存在は保証しません。日常の学習操作にはmarimo利用手順を使用してください。
+
+```cmd
+cd /d C:\dev\python_bayes_intro\marimo\2026
+rem 標準ライブラリだけで、保存先設定を含む検証用cmdを生成する。
+.venv\Scripts\python.exe -I -B .cache\validation\marimo-guide-20260926\test_guide.py launcher
+rem 外部取得を禁止し、掲載セルの生成・静的検査・5ケースを順に確認する。
+cmd.exe /d /c .cache\validation\marimo-guide-20260926\run_validation.cmd
+rem 検証用Notebookだけを対象に、ローカルHTTPの起動と回収を確認する。
+cmd.exe /d /c .cache\validation\marimo-guide-20260926\run_validation.cmd http
+```
+
+HTTP確認では認証情報を出力・ファイル保存していません。
+`run`の確認後は、検証が起動したPIDのプロセスツリーだけを終了させました。
+この回収は、利用者による`Ctrl+C`の正常終了やブラウザー操作を検証したものではありません。
+また、ボタン例は`autorun`を前提とする説明へ修正しました。`lazy`ではボタンの状態が残り得るためです。
+
+## 実装時に解消した点（uv環境準備時）
 
 - 継承された`PYTHONHOME`により、marimo起動時に別Pythonの標準ライブラリを参照していました。
   利用手順でこの指定を解除し、プロジェクトの実行系を確認するようにしました。
@@ -173,7 +228,7 @@ Numbaの計測は性能比較の根拠には使用していません。
 - Windows版marimoの一部状態保存はXDG設定だけでは移動できないため、
   marimo子プロセスだけ作業用プロファイルを使用する手順にしました。
 
-Taskは統合せず、Task 1、2、4a、3、4b、5、6の順で実行しました。
-Task 4は、ロック生成に必要なPython本体の導入（4a）と、環境構築・動作確認（4b）に分割しています。
+uv環境準備時のTaskは統合せず、Task 1、2、4a、3、4b、5、6の順で実行しました。
+当時のTask 4は、ロック生成に必要なPython本体の導入（4a）と、環境構築・動作確認（4b）に分割しています。
 1Taskあたり10,000行以下とし、生成ロックも行数に含めました。
 導入済みパッケージ、Python本体、キャッシュはGit対象の成果物には含めません。
