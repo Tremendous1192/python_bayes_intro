@@ -12,6 +12,7 @@
 1. uv の環境設定ファイルを作成してください。
     * `C:\dev\python_bayes_intro\marimo\2026\pyproject.toml`
 1. `C:\dev\python_bayes_intro\marimo\2026\uv_HowToUse.md` にuvの使い方・コマンドを書いてください。
+1. `C:\dev\python_bayes_intro\marimo\2026\README.md` にこのフォルダの内容を書いてください。
 1. 作成したファイルに、人間が理解できるようにコメントを加筆してください
 
 
