@@ -17,7 +17,7 @@
 
 
 # uv環境の要件
-* Python >=3.14
+* Python >=3.14, <3.15
 * `C:\dev\python_bayes_intro\marimo\2026\.venv\` とする
 ## ライブラリ
 * 2026-09-26時点の最新安定版を原則とする。
