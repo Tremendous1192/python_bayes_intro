@@ -14,3 +14,7 @@ marimo は VS Code Extension を使って、VS Code上で編集する。
 1. `C:\dev\python_bayes_intro\marimo\2026\HowToUse_marimo.md` にmarimoの使い方を書いてください。
 1. `C:\dev\python_bayes_intro\marimo\2026\README.md` にこのフォルダの内容を書いてください。
 1. 作成したファイルに、人間が理解できるようにコメントを加筆してください
+
+## 文章の要件
+1. `.md` ファイルは箇条書きで簡潔に書く
+1. `.cmd`, `.toml`, `.py` ファイルには箇条書きのコメントを多くつける

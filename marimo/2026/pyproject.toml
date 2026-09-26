@@ -1,62 +1,63 @@
-# 作成日: 2026-09-26
-# 目的: ベイズ推論の本編11本・参考5本を移植するNotebook専用環境を定義する。
-# 役割: 直接依存の原本。間接依存と配布物の固定はuv生成のuv.lockが担う。
-# 使用方法: uv_HowToUse.mdの保存先設定後、uv sync --locked --group notebookを実行する。
-# 制約: Windows 11 AMD64、通常のGIL付きCPython 3.14、CPUでの学習を対象とする。
-# 非対応: EXE配布、GPU版Notebook、condaとの混用、セルからの依存追加。
+# - 作成日: 2026-09-26
+# - 更新日: 2026-09-27。説明を項目別に整理し、設定値と処理順を維持する。
+# - 目的: ベイズ推論の本編11本・参考5本を移植するNotebook専用環境を定義する。
+# - 役割: 直接依存の原本。間接依存と配布物の固定はuv生成のuv.lockが担う。
+# - 使用方法: HowToUse_uv.mdの保存先設定後、uv sync --locked --group notebookを実行する。
+# - 制約: Windows 11 AMD64、通常のGIL付きCPython 3.14、CPUでの学習を対象とする。
+# - 非対応: EXE配布、GPU版Notebook、condaとの混用、セルからの依存追加。
 
 [project]
 name = "python-bayes-intro-marimo-2026"
 version = "0.1.0"
 description = "ベイズ推論「超」入門のmarimo移植に向けた学習環境"
-# 対応範囲と開発用パッチ版は別管理とし、実行版は.python-versionで固定する。
+# - 対応範囲と開発用パッチ版は別管理とし、実行版は.python-versionで固定する。
 requires-python = ">=3.14,<3.15"
 dependencies = [
-    # 描画本体、日本語フォント設定、統計プロット。
+    # - 描画本体、日本語フォント設定、統計プロット。
     "matplotlib==3.11.2",
     "matplotlib-fontja==1.1.0",
     "seaborn==0.13.2",
-    # モデル定義、CPU用NUTS、推論結果の解析。旧書籍APIは移植時に更新する。
+    # - モデル定義、CPU用NUTS、推論結果の解析。旧書籍APIは移植時に更新する。
     "pymc==6.3.2",
     "nutpie==0.16.11",
     "arviz==1.3.0",
-    # 数値計算と表処理。既存pandas処理は一律にPolarsへ置換しない。
+    # - 数値計算と表処理。既存pandas処理は一律にPolarsへ置換しない。
     "numpy==2.5.3",
     "polars==1.44.2",
     "pandas==3.0.6",
     "scipy==1.18.1",
-    # 第4章の自動微分とモデル図。Graphvizのdot本体は別途確認する。
+    # - 第4章の自動微分とモデル図。Graphvizのdot本体は別途確認する。
     "torch==2.14.0",
     "graphviz==0.21",
-    # 参考Notebook「書籍評価」のxlsx読込に必要な追加依存。
+    # - 参考Notebook「書籍評価」のxlsx読込に必要な追加依存。
     "openpyxl==3.1.5",
 ]
 
 [dependency-groups]
-# Notebookを起動・検証するときに明示する。JupyterとEXEビルドは追加しない。
-# PyTensorもNumbaを間接依存に持つため、この環境全体がNotebook専用である。
+# - Notebookを起動・検証するときに明示する。JupyterとEXEビルドは追加しない。
+# - PyTensorもNumbaを間接依存に持つため、この環境全体がNotebook専用である。
 notebook = [
     "marimo==0.25.0",
     "numba==0.67.0",
 ]
 
 [tool.uv]
-# 配布用Pythonパッケージではなく、依存を管理する学習プロジェクトとする。
+# - 配布用Pythonパッケージではなく、依存を管理する学習プロジェクトとする。
 package = false
 required-version = ">=0.11.7"
 default-groups = []
-# 承認されたWindows AMD64のみ解決し、対象外OSのGPU依存を取り込まない。
+# - 承認されたWindows AMD64のみ解決し、対象外OSのGPU依存を取り込まない。
 environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]
 required-environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]
-# 2026-09-26 JSTの終了境界。各配布ファイルのアップロード日時を制限する。
+# - 2026-09-26 JSTの終了境界。各配布ファイルのアップロード日時を制限する。
 exclude-newer = "2026-09-27T00:00:00+09:00"
 prerelease = "disallow"
-# 未承認のコンパイラ導入や実行系の自動取得を避け、Python本体は明示的に導入する。
+# - 未承認のコンパイラ導入や実行系の自動取得を避け、Python本体は明示的に導入する。
 no-build = true
 python-downloads = "never"
 
 [[tool.uv.index]]
-# 直接依存・間接依存とも公式PyPIを使用し、外部の追加インデックスを要求しない。
+# - 直接依存・間接依存とも公式PyPIを使用し、外部の追加インデックスを要求しない。
 name = "pypi"
 url = "https://pypi.org/simple"
 default = true

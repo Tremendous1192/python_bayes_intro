@@ -2,7 +2,7 @@
 .venv/
 
 # 作成日: 2026-09-26。キャッシュ・検証出力・端末固有設定を除外する。
-# uv.lockと依存の原本は共有し、環境復元にはuv_HowToUse.mdの手順を使う。
+# uv.lockと依存の原本は共有し、環境復元には2026/HowToUse_uv.mdの手順を使う。
 .cache/
 __pycache__/
 *.py[cod]
