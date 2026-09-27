@@ -24,7 +24,7 @@ def _():
     import pymc as pm
     import arviz as az
     from scipy import stats
-    mo.md("## 第1章 確率分布\n二項分布、正規近似、事前予測サンプルを比較します。")
+    mo.md('## Chapter 1: Probability distributions\nCompare a binomial distribution, its normal approximation, and prior predictive samples.')
     return (mo, np, pd, plt, pm, az, stats,)
 
 
@@ -118,7 +118,7 @@ def _(az, mo, pd, plt, prior_samples):
     _collection = az.plot_dist(prior_samples, group="prior", backend="matplotlib", ci_kind="hdi", ci_prob=0.94)
     _figure = _collection.get_viz("figure")
     plt.close(_figure)
-    mo.vstack([mo.md("### サンプル値の確認\nDataTreeのpriorグループから値を取り出します。"),
+    mo.vstack([mo.md('### Inspect samples\nExtract values from the prior group of the DataTree.'),
                prior_samples, mo.ui.table(value_counts.reset_index()), mo.ui.table(summary.reset_index()), _figure])
     return (x_samples, summary,)
 

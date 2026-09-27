@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -35,7 +35,7 @@ def _(mo, np, plt):
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
     import random
-    from notebook_data import load_data
+    from mod_load_data import load_data
     df = load_data("iris.csv")
     df1 = df.query('species == "versicolor"')
     X = df1["sepal_length"].to_numpy()
@@ -52,7 +52,7 @@ def _(mo, np, plt):
     _axes[0].set_title("All 50 observations")
     _axes[1].set_title("Three selected observations")
     plt.close(_figure)
-    mo.vstack([mo.md("## 5.2 線形回帰\n全50件と乱数で選んだ3件を比較します。3件ではtarget_accept=0.995と既定0.8の違いも調べます。既定値の例は発散を含む場合があります。"),
+    mo.vstack([mo.md('## 5.2 Linear regression\nCompare all 50 observations with 3 randomly selected observations. For the smaller sample, compare target_accept=0.995 with the default 0.8; the default example may have divergences.'),
                mo.ui.table(df.head()), _figure])
     return (X, Y, X_less, Y_less, sample_indexes,)
 

@@ -22,13 +22,13 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     import pandas as pd
     import arviz as az
     from scipy.special import expit
-    from notebook_data import load_data
-    from irt_model import irt_model, ability_summary
+    from mod_load_data import load_data
+    from model_irt import irt_model, ability_summary
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view, pd, az, expit, load_data, irt_model, ability_summary,)
 
 

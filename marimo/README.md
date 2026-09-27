@@ -4,6 +4,8 @@
 - 現在のVS Codeウィンドウとログイン状態を使い、プロジェクト専用のPythonで実行します。
 - 書籍の本編11本・参考4本、計15本の学習内容を`notebooks/`へ移植しています。
 - 作成日：2026-09-26。更新日：2026-09-27。
+- 登録処理統合の8 Taskの状態・実行結果は[統合検証](log/統合検証.md)を参照します。過去の移植記録と区別しています。
+- データ準備の統合とテスト移動は[追加の検証記録](log/データ統合とテスト移動.md)を参照します。
 
 ## まずはここから
 
@@ -18,40 +20,41 @@
 - uvや検査を使う場合は、現在のウィンドウのCommand Promptで次を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 call env.cmd check
 ```
 
 - 初回の依存同期後は、先に`call env.cmd configure`で登録します。
 - Notebookのカーネルには`.venv\Scripts\python.exe`を選びます。
-- 親フォルダを開いている場合は、対象の`2026`を現在のワークスペースに追加します。
+- 親フォルダを開いている場合は、対象の`marimo`を現在のワークスペースに追加します。
 - 詳しい設定範囲・カーネル選択はuv利用手順の第4節を参照します。
 - 毎回の依存同期・再登録・別ウィンドウ起動は不要です。
 
 ## フォルダの中身
 
-- 対象：`/python_bayes_intro/marimo/2026/`。
+- 対象：`/python_bayes_intro/marimo/`。Notebook用テストは`tests/`、その他の追加補助ファイル・検証記録は`log/`へ配置し、直下のファイル数を増やしません。
 
 | ファイル・フォルダ | 役割 |
 | --- | --- |
 | [pyproject.toml](pyproject.toml) | Pythonの対応範囲と直接依存の原本 |
 | [.python-version](.python-version) | 使用するPythonのパッチ版 |
 | [uv.lock](uv.lock) | uvが生成した依存・配布物の固定情報 |
-| [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除の入口 |
-| [log/](log/) | 環境設定・データ再取得の補助コード、検証コード・記録 |
+| [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除・回帰テスト、データ準備 |
+| [log/](log/) | データ検証コード・検証記録・画像 |
 | [.vscode/settings.json](.vscode/settings.json) | Python候補・marimoの共有設定 |
 | [examples/basic_usage.py](examples/basic_usage.py) | 平均・表・図・ボタンの8セルの例 |
 | [examples/test_basic_usage.py](examples/test_basic_usage.py) | 例を新規プロセスで検証するNotebook専用コード |
-| [notebooks/](notebooks/) | 書籍のmarimo Notebook、必要な共通処理、章別テスト |
+| [notebooks/](notebooks/) | 書籍のmarimo Notebook、必要な共通処理 |
+| [tests/](tests/) | Notebook用の章別・共通処理テスト14本 |
 | [data/README.md](data/README.md) | データの取得元・固定コミット・再取得手順 |
 | [HowToUse_uv.md](HowToUse_uv.md) | 初回導入・日常操作・更新・復元 |
 | [HowToUse_marimo.md](HowToUse_marimo.md) | 拡張機能での作成・編集・実行・保存・画面確認 |
-| [uv_要件.md](要件/uv_要件.md) / [marimo_要件.md](要件/marimo_要件.md) / [移植_要件.md](要件/移植_要件.md) | 環境・ガイド・移植の要件 |
+| [要件.md](要件/要件.md) | 環境・ガイド・移植の要件 |
 | `.venv/` | プロジェクト専用のPython環境と生成された起動フック |
 | `.cache/` | Python本体・キャッシュ・登録記録・復元用の退避 |
 
-- `.venv/`・`.cache/`は[既存の.gitignore](../.gitignore)でGit管理から除外しています。
+- `.venv/`・`.cache/`は[.gitignore](.gitignore)、一時検証用の`log/_work/`は[log/.gitignore](log/.gitignore)でGit管理から除外しています。
 - **`.cache/python/`はPython本体です。`.cache`全体を削除・移動しないでください。**
 - VS Codeのユーザー設定・認証情報・拡張機能のコピーは行いません。
 
@@ -59,17 +62,17 @@ call env.cmd check
 
 - ターミナル：`call env.cmd`が、呼出元と子プロセスにuv用の設定を適用します。
 - Notebook：選択した専用`.venv`が、Python起動時に登録済み設定を読みます。
-- `log/configure_runtime.py`は、親のVS Codeへ環境変数を遡って書き込むための処理ではありません。
-- 補助コードの追加理由は、拡張機能から起動されるPythonに影響範囲を限定するためです。
+- 登録処理・回帰テスト・データ準備は`env.cmd`の埋込Pythonに統合しています。
+- 起動フックは拡張機能から起動される専用Pythonへ設定を適用します。
 - Notebook専用Pythonでは、個人領域参照もプロジェクト内へ切り替えます。
 - ターミナルとVS Code本体の個人領域・ログイン状態は切り替えません。
 - この.venvの全Python起動に設定が適用されます。他用途の環境と共用しません。
 - 起動後の設定だけではUTF-8モードを変更できません。中継プロセスから子カーネルへの継承を検証します。
-- `-S`は起動フックを無効にするため、修復用の登録器にだけ使用します。
+- `env.cmd`の埋込Pythonは`-S`で起動フックを読みません。登録の修復や標準ライブラリだけのデータ準備に使います。
 
 | 生成物 | 原本・生成方法 |
 | --- | --- |
-| `.venv/Lib/site-packages/_bayes_runtime.py` | `log/configure_runtime.py`と`env.cmd`から生成する設定適用コード |
+| `.venv/Lib/site-packages/_bayes_runtime.py` | `env.cmd`の埋込Pythonから生成する設定適用コード |
 | `.venv/Lib/site-packages/000_bayes_runtime.pth` | 同じ登録器から生成する読込入口 |
 | `.cache/runtime-registration.json` | 生成物2本の所有確認用SHA-256 |
 
@@ -81,7 +84,7 @@ call env.cmd check
 
 ## 採用環境
 
-- 以下は2026-09-26の既存記録にある組合せです。現在の導入・実行状況は「検証」を確認します。
+- Python・依存は2026-09-27に再確認しました。VS Codeと拡張機能の版は以前の記録値で、実画面での受入とは区別します。
 
 | 対象 | 固定値・記録版 |
 | --- | --- |
@@ -95,8 +98,8 @@ call env.cmd check
 
 - CPUで学ぶNotebook専用環境です。上位READMEのconda手順とは混用せず、EXE作成・GPU実行には使いません。
 - 指定14ライブラリに、5.3節のExcel保存・検証用`openpyxl`を加えています。
-- 既存記録では、15件とも基準日以前の最新安定版と一致し、互換性による版の引下げはありません。
-- 公開日時・wheel・importの過去の確認記録と、今回の再検証結果は区別します。
+- 15件とも基準日以前の最新安定版と一致し、互換性による版の引下げはありません。公式PyPIの確認結果は[依存確認](log/依存確認.json)を参照します。
+- 実環境のimport・版・実行系は[環境確認](log/environment-check.txt)に記録しています。
 
 | ライブラリ | 採用版 | 用途 |
 | --- | --- | --- |
@@ -127,8 +130,8 @@ call env.cmd check
 - uv 0.11.7の内蔵カタログには対象版がないため、[固定した公式カタログ](https://raw.githubusercontent.com/astral-sh/uv/299a93de4b94e754f260c673d2de456afbdd4fb7/crates/uv-python/download-metadata.json)を使います。
 - 取得コマンド・ハッシュ・復元方法：uv利用手順の第2節。
 - ロックの原本：`pyproject.toml`。生成先：`uv.lock`。生成時のuv：0.11.7。
-- 初回の生成コマンド：`uv lock --python C:/dev/python_bayes_intro/marimo/2026/.cache/python/cpython-3.14.7-windows-x86_64-none/python.exe`。
-- ロック：83パッケージ・1,025行。既存記録の導入数：80パッケージ。
+- 再生成する場合のコマンド：`uv lock --python C:/dev/python_bayes_intro/marimo/.cache/python/cpython-3.14.7-windows-x86_64-none/python.exe`。
+- ロック：83パッケージ・1,025行。今回の導入数：80パッケージ。固定値とロックは変更していません。
 - 取得元：公式PyPI。`exclude-newer = "2026-09-27T00:00:00+09:00"`で基準日の終了境界までに制限します。
 - Windows AMD64用の安定版を使い、依存パッケージのソースビルドは許可しません。
 - Pythonの通常の自動取得は禁止し、初回の明示的な導入時だけ許可します。
@@ -161,8 +164,9 @@ call env.cmd check
 | 参考 3クラス潜在変数 | [sample_three_class.py](notebooks/sample_three_class.py) |
 | 参考 FAQ | [sample_latent_faq.py](notebooks/sample_latent_faq.py) |
 
-- 共通処理は、固定データの検証、サンプラーと資源制限、ArviZ表示、複数教材で重複するモデルに限定しています。
-- 説明・コメントは日本語、画面出力・図の文字は英語です。元教材の日本語の集計キーは内部で保持します。
+- 共通処理：[mod_load_data.py](notebooks/mod_load_data.py)は固定データの検証・読込、[mod_sampling.py](notebooks/mod_sampling.py)はサンプラーと資源制限、[mod_plots.py](notebooks/mod_plots.py)は診断・モデル図の表示を担当します。
+- モデル定義：[model_two_class.py](notebooks/model_two_class.py)、[model_three_class.py](notebooks/model_three_class.py)、[model_irt.py](notebooks/model_irt.py)を対応する教材から読み込みます。
+- 文書・コメントは日本語、Notebook内の説明・画面出力・図の文字は英語です。元教材の日本語の集計キーは内部で保持します。
 - `pm.ConstantData`を`pm.Data`へ、事前予測の`samples`を`draws`へ移行しています。
 - PyMC 6のDataTreeとArviZ 1のPlotCollectionを使い、信用区間は元教材に合わせて94% HDIを明示しています。
 - ベータ密度の正規化式、潜在成分を種名と断定する表示、IRTの集計順序と固定IDの混在を修正しています。
@@ -172,7 +176,8 @@ call env.cmd check
 
 ### データ準備と実行
 
-- 同梱のCSVを使い、Notebookの読込時にハッシュを検証します。
+- 同梱のCSVを使い、Notebookの読込時にハッシュを検証します。既存CSVのCRLFはメモリ上でLFへ戻して照合します。
+- `call env.cmd prepare-data`は3本を検査し、`--download`を付けた場合だけ不足分を取得します。
 - CSVの再取得が必要な場合だけ、[データ手順](data/README.md)の保守用コマンドを使います。
 - ハッシュ不一致は自動上書きしません。Notebookも不一致を検出して停止します。
 - 対応表の`.py`をVS Codeのmarimo拡張機能で開き、登録済み`.venv`を選びます。
@@ -191,26 +196,29 @@ call env.cmd check
 ### 章別の再検証
 
 - 次のコマンドは、新規プロセスで`Book run`の実行・数値・出力を検証します。長い推論を同時に起動しません。
-- 実施済みの結果・所要時間・警告・未実施項目は[移植検証](log/移植検証.md)に記録します。
+- 登録処理統合時の結果・警告・未実施項目は[統合検証](log/統合検証.md)、以前の結果は[移植検証](log/移植検証.md)に記録しています。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
-uv run --locked --offline --group notebook python notebooks/test_notebook_data.py
-uv run --locked --offline --group notebook python notebooks/test_ch01_ch03.py
-uv run --locked --offline --group notebook python notebooks/test_ch02.py
-uv run --locked --offline --group notebook python notebooks/test_ch04.py
-uv run --locked --offline --group notebook python notebooks/test_ch05_01.py
-uv run --locked --offline --group notebook python notebooks/test_ch05_02_03.py
-uv run --locked --offline --group notebook python notebooks/test_ch05_04.py
-uv run --locked --offline --group notebook python notebooks/test_latent_references.py
-uv run --locked --offline --group notebook python notebooks/test_ch06_01.py
-uv run --locked --offline --group notebook python notebooks/test_ch06_02.py
-uv run --locked --offline --group notebook python notebooks/test_irt_backend.py
-uv run --locked --offline --group notebook python notebooks/test_ch06_03.py book
-uv run --locked --offline --group notebook python notebooks/test_notebook_plots.py
-uv run --locked --offline --group notebook python notebooks/test_latent_views.py
+uv run --locked --offline --group notebook python tests/test_notebook_data.py
+uv run --locked --offline --group notebook python log/test_data_integrity.py
+uv run --locked --offline --group notebook python tests/test_ch01_ch03.py
+uv run --locked --offline --group notebook python tests/test_ch02.py
+uv run --locked --offline --group notebook python tests/test_ch04.py
+uv run --locked --offline --group notebook python tests/test_ch05_01.py
+uv run --locked --offline --group notebook python tests/test_ch05_02_03.py
+uv run --locked --offline --group notebook python tests/test_ch05_04.py
+uv run --locked --offline --group notebook python tests/test_latent_references.py
+uv run --locked --offline --group notebook python tests/test_ch06_01.py
+uv run --locked --offline --group notebook python tests/test_ch06_02.py
+uv run --locked --offline --group notebook python tests/test_irt_backend.py
+uv run --locked --offline --group notebook python tests/test_ch06_03.py book
+uv run --locked --offline --group notebook python tests/test_notebook_plots.py
+uv run --locked --offline --group notebook python tests/test_latent_views.py
 ```
+
+- 各テストは自身の配置から`notebooks/`を読み込みます。手動の`PYTHONPATH`設定は不要です。
 
 - `app.run(defs=...)`は新規セッションでの計算・表示生成の検査です。VS Code画面のクリック・保存・再起動の検査とは区別します。
 - [PyMCのsample](https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sample.html)・[fit](https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.fit.html)、[ArviZのforest plot](https://python.arviz.org/projects/plots/en/stable/api/generated/arviz_plots.plot_forest.html)を固定環境の実装と照合しています。
@@ -220,24 +228,25 @@ uv run --locked --offline --group notebook python notebooks/test_latent_views.py
 - 同じウィンドウのCommand Promptで、各コマンドの成功を確認してから次へ進みます。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 call env.cmd check
 uv lock --check
-uv run --locked --group notebook python log/test_configure_runtime.py
+call env.cmd test
 uv run --locked --group notebook marimo check examples/basic_usage.py
 uv run --locked --group notebook python examples/test_basic_usage.py
 ```
 
-- 登録器の試験は`.cache/`の使い捨てデータで、他者ファイル・利用者の編集・操作ロックを保全することを確認します。
+- 登録器の試験は`log/_work/`の使い捨てデータで、他者ファイル・利用者の編集・操作ロックを保全することを確認します。
+- 凡例の検証画像とIRTの測定記録は`log/validation/`に保存します。JIT等の実行キャッシュは`.cache/`です。
 - 新規プロセス試験は、ターミナルの管理対象設定を外してから、起動フックによる適用を確認します。
 - Notebookの3ケースは初期値10・変更後20・変更後のボタン押下相当です。
 - `app.run(defs=...)`による模擬であり、画面操作ではありません。
 - 画面確認はmarimo利用手順の第10節で行い、自動検証と区別します。
 
-### 既存ウィンドウ対応（2026-09-27）
+### 既存ウィンドウ対応の過去記録（2026-09-27）
 
-- 以下のTask 1～7は環境対応時の記録です。今回の移植Task 1～13の結果は[移植検証](log/移植検証.md)で確認します。
+- 以下のTask 1～7は以前の環境対応時の記録です。以前の移植Task 1～13と整理Taskは[移植検証](log/移植検証.md)で確認します。
 - Task 1～7は順番に扱い、統合していません。
 - Task 1：使い捨て仮想環境で起動フック、子へのUTF-8継承、一時保存先、親環境の保持を確認しました。
 - Task 2：ターミナル設定、引数エラー、登録器未配置時の案内を確認しました。
@@ -245,11 +254,11 @@ uv run --locked --group notebook python examples/test_basic_usage.py
 - Task 4：プロジェクト設定の構文と導入済みmarimo拡張機能0.18.1の設定名を照合しました。
 - Task 5：操作ガイドを更新し、ローカルリンク25件・旧起動コマンドへの参照解消・差分の空白検査を確認しました。
 - Task 6：以下の自動検証はPassedです。画面での受入確認はNot runで、Task全体は未完了です。
-- Task 7：当時は削除を保留。今回のファイル整理Task 6で旧起動ファイルを削除しました。
-- 今回の固定環境復元：カタログSHA-256一致、CPython 3.14.7、uv 0.11.7、83パッケージ解決・80パッケージ同期。
+- Task 7：当時は削除を保留。その後のファイル整理Task 6で旧起動ファイルを削除しました。
+- 当時の固定環境復元：カタログSHA-256一致、CPython 3.14.7、uv 0.11.7、83パッケージ解決・80パッケージ同期。
 - GUI操作用ツールは利用できません。画面・ログイン状態の確認は利用者による結果を待ちます。
-- 元ファイルの退避：`.cache/same-window-backup-20260927/`。ファイル別SHA-256は同フォルダの`manifest.json`にあります。
-- 既存の採用版・依存ロック・要件書は維持しています。全ライブラリの最新性は再調査していません。
+- 当時の退避先の記録：`.cache/same-window-backup-20260927/`。今回の旧2ファイルの退避先は[統合検証](log/統合検証.md)を参照します。
+- 当時は採用版・依存ロック・要件書を維持し、全ライブラリの最新性を再調査していませんでした。
 
 | 判定 | Task 6の確認項目 |
 | --- | --- |

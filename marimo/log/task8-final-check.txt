@@ -1,0 +1,9 @@
+Passed: 44 Python files and embedded Python syntax; env.cmd 500 lines
+Passed: project root file names unchanged
+Passed: dependency definitions, lock, CSV bytes and fixed hashes unchanged
+Passed: VS Code setting values preserved
+Failed: protected baseline hash changed: AGENTS.md; preserve current content
+Passed: protected baseline hash unchanged: 下書き.md
+Passed: original notebook sources have no tracked changes
+Passed: no Git index lock at the checked repository locations
+Local work scripts and retired-code backups: 926 physical Python lines

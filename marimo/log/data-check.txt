@@ -1,0 +1,16 @@
+Passed: iris.csv, 4009 bytes
+Passed: test_scores.csv, 10027 bytes
+Passed: irt-sample.csv, 110252 bytes
+Checking pinned datasets and rejected input
+Passed: pinned data, schemas and rejected input
+
+Passed: iris.csv, 3858 bytes
+Passed: test_scores.csv, 9819 bytes
+Passed: irt-sample.csv, 109251 bytes
+Passed: iris.csv, 4009 bytes
+Passed: test_scores.csv, 10027 bytes
+Passed: irt-sample.csv, 110252 bytes
+Passed: iris.csv, 3858 bytes
+Passed: test_scores.csv, 10027 bytes
+Passed: irt-sample.csv, 110252 bytes
+Passed: LF/CRLF data, rejected modifications, strict download bytes, no network

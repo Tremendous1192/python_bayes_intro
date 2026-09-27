@@ -1,0 +1,22 @@
+Checking ch02_discrete
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Passed: ch02_discrete
+
+Checking ch02_normal
+Sampling: [x]
+Sampling: [x]
+Passed: ch02_normal
+
+Checking ch02_uniform_beta
+Sampling: [x]
+Sampling: [x]
+Sampling: [p]
+Sampling: [p]
+Sampling: [x]
+Passed: ch02_uniform_beta
+
+Checking ch02_intervals
+Passed: ch02_intervals
+

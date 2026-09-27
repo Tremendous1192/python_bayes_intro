@@ -1,0 +1,9 @@
+Checking IRT Windows workers; not a convergence test
+Only 5 samples per chain. Reliable r-hat and ESS diagnostics require longer chains for accurate estimate.
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [theta, a, b]
+Sampling 2 chains for 5 tune and 5 draw iterations (10 + 10 draws total) took 34 seconds.
+The number of samples is too small to check convergence reliably.
+Passed: IRT Windows workers
+

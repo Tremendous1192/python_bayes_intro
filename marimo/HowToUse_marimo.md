@@ -3,13 +3,13 @@
 - VS Codeの公式marimo拡張機能で、Notebookを作成・編集・実行・保存します。
 - 作成日：2026-09-26。文章・参照先の更新日：2026-09-27。
 - 対象：Windows 11 AMD64、CPython 3.14.7、marimo 0.25.0、拡張機能`marimo-team.vscode-marimo` 0.18.1。
-- 初回準備は[uv利用手順](HowToUse_uv.md)、検証結果は[検証記録](log/移植検証.md)を参照します。
+- 初回準備は[uv利用手順](HowToUse_uv.md)、今回の検証結果は[統合検証](log/統合検証.md)を参照します。
 
 ## 1. 現在のウィンドウで準備する
 
 1. [uv利用手順](HowToUse_uv.md)の第1～4節で、環境同期と`call env.cmd configure`を済ませます。
 2. 既存のVS Codeウィンドウをそのまま使います。
-   - 親フォルダを開いている場合は、対象の`2026`フォルダを同じワークスペースへ追加します。
+   - 親フォルダを開いている場合は、対象の`marimo`フォルダを同じワークスペースへ追加します。
    - 初回の拡張機能・フォルダの信頼・設定範囲は、uv利用手順の第4節に従います。
 3. 起動済みのNotebookカーネルがあれば停止し、登録後のPythonで起動し直します。
 
@@ -23,7 +23,7 @@
 3. Notebookのカーネル選択で、次のPythonを選びます。
 
 ```text
-C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
+C:\dev\python_bayes_intro\marimo\.venv\Scripts\python.exe
 ```
 
 4. 全8セルを実行し、最初の出力の`Python executable`・`Python version`を確認します。
@@ -61,7 +61,7 @@ C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
 ## 4. 自分のNotebookを作る
 
 1. コマンドパレットで`Create: New marimo notebook`を実行します。
-2. このフォルダ内に`first_notebook.py`などの名前で保存します。同名ファイルがあれば別名にします。
+2. `log/first_notebook.py`など、`log`以下へ保存します。同名ファイルがあれば別名にします。
 3. 第2節と同じカーネルを選び、次を1つのPythonセルに入力して実行します。
 
 ```python
@@ -97,14 +97,14 @@ mo.md(f"Mean: **{mean_value:.1f}**")
 | `stale`を実行済み結果と取り違えない | 入力変更後、まだ計算していないセルを確認する |
 
 - テキストエディターとNotebookエディターで、同じファイルを同時に編集しません。
-- 説明・コメントは日本語、画面出力・図の文字は英語にします。
+- 文書・コメントは日本語、Notebook内の説明・画面出力・図の文字は英語にします。
 
 ## 6. 検査と再現確認
 
 1. 現在のウィンドウの設定済み統合ターミナルで、静的検査と数値確認を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 call env.cmd check
 uv run --locked --group notebook marimo check examples/basic_usage.py
@@ -163,7 +163,7 @@ mo.stop(not run_calculation.value, mo.md("Click Run calculation."))
 1. 既存ウィンドウのCommand Promptで次を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 call env.cmd check
 ```
@@ -173,8 +173,8 @@ call env.cmd check
 4. 第8節でカーネル停止・再起動を行い、初期状態から再実行します。
 5. この操作を理由とする追加ログイン要求がなく、既存ウィンドウ・既存アカウントを維持できたことを確認します。
 
-- 画面確認は自動テストと区別し、実施日・結果・失敗した操作をREADMEへ記録します。
-- 起動スクリプト廃止の最終判定には、この画面確認も必要です。
+- 画面確認は自動テストと区別し、実施日・結果・失敗した操作を[統合検証](log/統合検証.md)へ記録します。
+- 第4章の未押下・短縮推論、IRTの停止・再実行も確認して、Task 8の画面受入を完了します。
 
 ## 参考資料
 

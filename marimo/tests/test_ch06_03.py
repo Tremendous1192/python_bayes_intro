@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: IRTの全観測・名前付き座標・MCMC/ADVI・同点比較を検証する。
 # - 役割: Notebook専用の新規プロセス検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch06_03.py book
+# - 使用: uv run --locked --group notebook python tests/test_ch06_03.py book
 # - 制約: 全1000人50問、CPU同時2チェーン、最大7200秒。quickは配線確認専用。
 # - 非対応: GUI・GPU・EXE・短縮標本による収束保証。
 import multiprocessing
@@ -10,12 +10,16 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
+
 import matplotlib
 matplotlib.use("Agg")
 import numpy as np
 
 from ch06_03_irt import app
-from irt_model import ability_summary
+from model_irt import ability_summary
 
 
 def test_irt_preparation() -> None:

@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -34,7 +34,7 @@ def _(mo, np, pm, model_view):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.md("## 4.3〜4.6\nベルヌーイ5観測と二項分布の成功数2を比較します。事後分布はどちらもBeta(3,4)です。Book runは明示例が3チェーン・各2000回、標準例が4チェーン・各1000回です。")
+    _introduction = mo.md('## 4.3 to 4.6\nCompare five Bernoulli observations with two binomial successes. Both posteriors are Beta(3,4). Book run uses 3 chains of 2,000 draws for the explicit example and 4 chains of 1,000 draws for the standard example.')
     X = np.array([1, 0, 0, 1, 0])
     # - 個々の観測値をベルヌーイ分布へ渡す。
     with pm.Model() as model1:
@@ -44,7 +44,7 @@ def _(mo, np, pm, model_view):
     with pm.Model() as model2:
         _p = pm.Uniform("p", lower=0.0, upper=1.0)
         pm.Binomial("X_obs", p=_p, n=5, observed=2)
-    mo.vstack([model_view(model1), model_view(model2)])
+    mo.vstack([_introduction, model_view(model1), model_view(model2)])
     return (model1, model2,)
 
 
@@ -83,9 +83,9 @@ def _(mo, inference_view, idata1_1, idata1_2, idata2):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.vstack([mo.md("### 明示的な反復条件"), inference_view(idata1_1, ["p"]),
-               mo.md("### 標準条件"), inference_view(idata1_2, ["p"]),
-               mo.md("### 二項分布による同じ問題"), inference_view(idata2, ["p"])])
+    mo.vstack([mo.md('### Explicit sampling settings'), inference_view(idata1_1, ["p"]),
+               mo.md('### Standard settings'), inference_view(idata1_2, ["p"]),
+               mo.md('### The same problem with a binomial likelihood'), inference_view(idata2, ["p"])])
     return
 
 

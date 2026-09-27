@@ -1,0 +1,20 @@
+Checking A/B probabilities against exact Beta integrals
+Initializing NUTS using jitter+adapt_diag...
+C:\dev\python_bayes_intro\marimo\.venv\Lib\site-packages\pytensor\link\c\cmodule.py:2939: UserWarning: PyTensor could not link to a BLAS installation. Operations that might benefit from BLAS will be severely degraded.
+This usually happens when PyTensor is installed via pip. We recommend it be installed via conda/mamba/pixi instead.
+Alternatively, you can use an experimental backend such as Numba or JAX that perform their own BLAS optimizations, by setting `pytensor.config.mode == 'NUMBA'` or passing `mode='NUMBA'` when compiling a PyTensor function.
+For more options and details see https://pytensor.readthedocs.io/en/latest/troubleshooting.html#how-do-i-configure-test-my-blas-library
+  warnings.warn(
+Sequential sampling (4 chains in 1 job)
+NUTS: [p_s_a, p_s_b]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 12 seconds.
+Initializing NUTS using jitter+adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [p_y_a, p_y_b]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 13 seconds.
+Sampling: [p_a, p_b]
+Sampling: [p_a, p_b]
+s: exact P(A > B) = 0.291037
+y: exact P(A > B) = 0.019987
+Passed: A/B probabilities
+

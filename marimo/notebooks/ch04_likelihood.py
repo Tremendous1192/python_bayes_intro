@@ -21,7 +21,7 @@ def _():
     import numpy as np
     import matplotlib.pyplot as plt
     import torch
-    mo.md("## 4.2 最尤推定\n5回中2回成功の尤度はp²(1−p)³です。解析的な最尤値2/5と自動微分による更新を比較します。")
+    mo.md('## 4.2 Maximum likelihood\nThe likelihood for 2 successes in 5 trials is p²(1−p)³. Compare the analytic estimate 2/5 with automatic differentiation.')
     return (mo, np, plt, torch,)
 
 

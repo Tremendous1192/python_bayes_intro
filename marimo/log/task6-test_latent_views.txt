@@ -1,0 +1,5 @@
+Checking latent plots with synthetic posterior samples
+Sampling: [x]
+Sampling: [p]
+Passed: latent plot legends
+

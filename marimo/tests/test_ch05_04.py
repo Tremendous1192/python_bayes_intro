@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: 2クラス潜在モデルの観測対応・支持・制約を検査する。
 # - 役割: 本編と簡略版のNotebook専用検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch05_04.py
+# - 使用: uv run --locked --group notebook python tests/test_ch05_04.py
 # - 制約: 本実行を1件ずつ、新規プロセスで最大3600秒実行する。
 # - 非対応: 単鎖の収束保証・GUI・EXE。
 import importlib
@@ -9,6 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
+
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

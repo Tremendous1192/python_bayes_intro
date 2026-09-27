@@ -1,0 +1,17 @@
+Passed: runtime values, local temp, bytecode and user-site isolation
+Passed: restart the Notebook kernel to apply registered settings
+Checking registration ownership and recovery
+Passed: restart the Notebook kernel to apply registered settings
+Passed: restart the Notebook kernel to apply registered settings
+Passed: restart the Notebook kernel to apply registered settings
+Passed: runtime registration removed; stop using kernels until configured again
+Passed: restart the Notebook kernel to apply registered settings
+Passed: restart the Notebook kernel to apply registered settings
+Passed: conflicts, repeat, lock, removal, recreation and partial damage
+
+Checking a fresh bridge and kernel without terminal settings
+Passed: selected Python, UTF-8 child, thread limit, local temp, unchanged parent
+
+Checking unprepared-environment and command errors
+Passed: initial setup, missing environment, invalid argument, no installation
+

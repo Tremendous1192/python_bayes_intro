@@ -1,0 +1,11 @@
+{
+  "c": {
+    "compile_and_first_seconds": 13.44371219999448,
+    "warm_pair_seconds": 0.07724220000091009
+  },
+  "numba": {
+    "compile_and_first_seconds": 17.860957099997904,
+    "warm_pair_seconds": 0.009046419998048805
+  },
+  "numba_threads": 2
+}

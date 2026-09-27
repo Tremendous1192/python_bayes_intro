@@ -1,0 +1,75 @@
+Interpreter: C:\dev\python_bayes_intro\marimo\.venv\Scripts\python.exe
+Python: 3.14.7 (main, Sep 24 2026, 17:57:14) [MSC v.1944 64 bit (AMD64)]
+Passed: six byte-identical modules; 41 Python files differ only in approved references; import targets exist
+Command: python -B -m marimo check C:\dev\python_bayes_intro\marimo\notebooks\ch01_distributions.py C:\dev\python_bayes_intro\marimo\notebooks\ch02_discrete.py C:\dev\python_bayes_intro\marimo\notebooks\ch02_intervals.py C:\dev\python_bayes_intro\marimo\notebooks\ch02_normal.py C:\dev\python_bayes_intro\marimo\notebooks\ch02_uniform_beta.py C:\dev\python_bayes_intro\marimo\notebooks\ch03_bayes.py C:\dev\python_bayes_intro\marimo\notebooks\ch04_likelihood.py C:\dev\python_bayes_intro\marimo\notebooks\ch04_posterior.py C:\dev\python_bayes_intro\marimo\notebooks\ch04_prior_comparison.py C:\dev\python_bayes_intro\marimo\notebooks\ch05_01_distribution.py C:\dev\python_bayes_intro\marimo\notebooks\ch05_02_regression.py C:\dev\python_bayes_intro\marimo\notebooks\ch05_03_hierarchical.py C:\dev\python_bayes_intro\marimo\notebooks\ch05_04_latent.py C:\dev\python_bayes_intro\marimo\notebooks\ch06_01_ab_test.py C:\dev\python_bayes_intro\marimo\notebooks\ch06_02_effects.py C:\dev\python_bayes_intro\marimo\notebooks\ch06_03_irt.py C:\dev\python_bayes_intro\marimo\notebooks\sample_ch04_figure.py C:\dev\python_bayes_intro\marimo\notebooks\sample_ch05_04_simplified.py C:\dev\python_bayes_intro\marimo\notebooks\sample_latent_faq.py C:\dev\python_bayes_intro\marimo\notebooks\sample_three_class.py
+Passed: 20 marimo notebooks
+Command: python -B log/test_data_integrity.py
+Passed: iris.csv, 3858 bytes
+Passed: test_scores.csv, 9819 bytes
+Passed: irt-sample.csv, 109251 bytes
+Passed: iris.csv, 4009 bytes
+Passed: test_scores.csv, 10027 bytes
+Passed: irt-sample.csv, 110252 bytes
+Passed: iris.csv, 3858 bytes
+Passed: test_scores.csv, 10027 bytes
+Passed: irt-sample.csv, 110252 bytes
+Passed: LF/CRLF, rejected modifications, strict/limited downloads, missing data guidance, no network
+Passed: log/test_data_integrity.py
+Command: python -B tests/test_notebook_data.py
+Checking pinned datasets and rejected input
+Passed: pinned data, schemas and rejected input
+
+Passed: tests/test_notebook_data.py
+Command: python -B tests/test_notebook_plots.py
+Checking diagnostic display and chain selection
+Passed: diagnostic display
+
+Passed: tests/test_notebook_plots.py
+Command: python -B tests/test_ch04.py ch04_posterior quick
+Checking ch04_posterior: quick
+Initializing NUTS using jitter+adapt_diag...
+Sequential sampling (3 chains in 1 job)
+NUTS: [p]
+Sampling 3 chains for 150 tune and 100 draw iterations (450 + 300 draws total) took 0 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Initializing NUTS using jitter+adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [p]
+Sampling 4 chains for 150 tune and 100 draw iterations (600 + 400 draws total) took 0 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Initializing NUTS using jitter+adapt_diag...
+C:\dev\python_bayes_intro\marimo\.venv\Lib\site-packages\pytensor\link\c\cmodule.py:2939: UserWarning: PyTensor could not link to a BLAS installation. Operations that might benefit from BLAS will be severely degraded.
+This usually happens when PyTensor is installed via pip. We recommend it be installed via conda/mamba/pixi instead.
+Alternatively, you can use an experimental backend such as Numba or JAX that perform their own BLAS optimizations, by setting `pytensor.config.mode == 'NUMBA'` or passing `mode='NUMBA'` when compiling a PyTensor function.
+For more options and details see https://pytensor.readthedocs.io/en/latest/troubleshooting.html#how-do-i-configure-test-my-blas-library
+  warnings.warn(
+Sequential sampling (4 chains in 1 job)
+NUTS: [p]
+Sampling 4 chains for 150 tune and 100 draw iterations (600 + 400 draws total) took 0 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Passed: ch04_posterior, quick
+
+Passed: tests/test_ch04.py
+Command: python -B -c import sys; from pathlib import Path; sys.path.insert(0, 'C:\\dev\\python_bayes_intro\\marimo\\tests'); import test_latent_views as test; test.__file__='C:\\dev\\python_bayes_intro\\marimo\\log\\_work\\module-rename-artifacts\\tests\\test_latent_views.py'; test.test_latent_legends()
+Checking latent plots with synthetic posterior samples
+Sampling: [x]
+Sampling: [p]
+Passed: latent plot legends
+
+Passed: 2/3-class model and plot integration
+Command: python -B tests/test_ch06_03.py spawn
+Checking IRT Windows workers; not a convergence test
+Only 5 samples per chain. Reliable r-hat and ESS diagnostics require longer chains for accurate estimate.
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [theta, a, b]
+Sampling 2 chains for 5 tune and 5 draw iterations (10 + 10 draws total) took 36 seconds.
+The number of samples is too small to check convergence reliably.
+Passed: IRT Windows workers
+
+Passed: IRT Windows spawn
+Passed: module rename references, marimo validation and all selected regressions

@@ -56,7 +56,7 @@ def _(Beta, mo, np, plt):
     _axis.plot(_p, Beta(_p, 3, 4))
     _axis.set(title="Beta alpha=3 beta=4", xlabel="p", ylabel="Density")
     plt.close(_beta_figure)
-    mo.vstack([mo.md("## 2.4〜2.6\n一様分布、ベータ分布、半正規分布を比較します。Beta関数は区間全体の積分が1になる式です。"), _beta_figure])
+    mo.vstack([mo.md('## 2.4 to 2.6\nCompare uniform, beta, and half-normal distributions. The Beta density integrates to 1 over its support.'), _beta_figure])
     return
 
 

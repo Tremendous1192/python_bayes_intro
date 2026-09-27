@@ -51,7 +51,7 @@ def _(mo, np, plt, stats):
         _axis.set(title=_title, xlabel="Value", ylabel="Density")
     _axes[1].axhline(0.05, color="black", linestyle="--")
     plt.close(_figure)
-    mo.vstack([mo.md("## CIとHDIの違い\n元の例は中央80%区間と密度0.05以上の区間です。両者の確率質量は同一ではありません。"),
+    mo.vstack([mo.md('## Central intervals and HDIs\nThe original examples use a central 80% interval and a density threshold of 0.05. Their probability masses differ.'),
                mo.ui.table({"Interval": ["Central", "Density threshold"], "Mass": [ci_mass, hdi_mass]}), _figure])
     return (ci_bounds, ci_mass, hdi_bounds, hdi_mass,)
 

@@ -1,0 +1,3 @@
+Checking diagnostic display and chain selection
+Passed: diagnostic display
+

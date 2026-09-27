@@ -1,12 +1,17 @@
 # - 作成日: 2026-09-27
 # - 目的: IRTのCPUバックエンド変更を対数密度・勾配の一致と実測で検証する。
 # - 役割: Notebook専用。Numbaの結果を非JITのC実装と独立した数式で照合する。
-# - 使用: uv run --locked --group notebook python notebooks/test_irt_backend.py
-# - 制約: 全50000回答、float64、Numba上限2スレッド、生成物は.cache内。
+# - 使用: uv run --locked --group notebook python tests/test_irt_backend.py
+# - 制約: 全50000回答、float64、Numba上限2スレッド、測定記録はlog/validation内。
 # - 非対応: EXE・GPU・別機種への速度保証・短縮標本による収束保証。
 import json
 from pathlib import Path
 from time import perf_counter
+
+import sys
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import numba
 import numpy as np
@@ -14,14 +19,14 @@ import pandas as pd
 from pytensor.compile.mode import Mode, get_mode
 from scipy import special, stats
 
-from irt_model import irt_model
-from notebook_data import load_data
+from model_irt import irt_model
+from mod_load_data import load_data
 
 
 def test_irt_backends() -> None:
     """- CとNumbaの密度・勾配を3つの固定点で比較する。
     - 引数・戻り値: なし。前提: 固定環境、登録済みキャッシュ先。
-    - 副作用: CPUコンパイル・英語出力・.cacheへの測定記録。
+    - 副作用: CPUコンパイル・英語出力・log/validationへの測定記録。
     - 失敗: API不適合や数値不一致を伝える。使用例: test_irt_backends()。
     """
     print("Checking IRT C and Numba backends on all 50000 responses", flush=True)
@@ -75,7 +80,7 @@ def test_irt_backends() -> None:
             np.testing.assert_allclose(c_logp(current), expected, rtol=1e-10, atol=1e-7)
             np.testing.assert_allclose(n_logp(current), expected, rtol=1e-10, atol=1e-7)
             np.testing.assert_allclose(n_grad(current), c_grad(current), rtol=1e-9, atol=1e-7)
-        target = Path(__file__).resolve().parents[1] / ".cache" / "validation"
+        target = Path(__file__).resolve().parents[1] / "log" / "validation"
         target.mkdir(exist_ok=True)
         results["numba_threads"] = numba.get_num_threads()
         (target / "irt-backends.json").write_text(json.dumps(results, indent=2), encoding="utf-8")

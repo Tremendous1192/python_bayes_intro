@@ -9,15 +9,15 @@
 - 再取得：CSVが不足した場合だけ、プロジェクトの設定済みCommand Promptで次を実行する。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
-call env.cmd
-uv run --locked --group notebook python log/prepare_data.py --download
+cd /d C:\dev\python_bayes_intro\marimo
+call env.cmd prepare-data --download
 ```
 
 - 取得済みの場合はハッシュを確認し、上書きしない。
-- 検査だけの場合は`--download`を省略する。
+- 検査だけの場合は`call env.cmd prepare-data`を実行する。取得処理は`env.cmd`内に統合している。
 - 通信は各ファイル30秒、応答サイズは2MB以下に制限する。
 - 取得失敗時は原因を解消して同じコマンドを実行する。既存ファイルは保持される。
 - ハッシュ不一致時はファイルを保存したまま原因を確認する。自動削除・更新はしない。
-- CSVは取得バイト列を保持する。改行・数値を手編集しない。
+- ダウンロード時は取得バイト列のSHA-256を検証して保存する。
+- 同梱CSVの検査はCRLFをメモリ上でLFへ戻して照合する。ファイルと固定ハッシュは書き換えず、数値変更・単独CRは拒否する。
 - 取得実績：2026-09-27、移動前のprepare_data.pyで実施、CPython 3.14.7／uv 0.11.7。

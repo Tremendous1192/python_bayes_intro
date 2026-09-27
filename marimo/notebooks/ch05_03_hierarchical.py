@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -37,7 +37,7 @@ def _(mo, np, plt):
     import pandas as pd
     import random
     import seaborn as sns
-    from notebook_data import load_data
+    from mod_load_data import load_data
     df = load_data("iris.csv")
     species_order = ["setosa", "versicolor", "virginica"]
     sample_indexes = random.Random(42).sample(range(50), 3)
@@ -50,7 +50,7 @@ def _(mo, np, plt):
     sns.scatterplot(data=df_sel, x="sepal_length", y="sepal_width", hue="species", style="species", ax=_axis)
     _axis.set_title("Nine selected observations")
     plt.close(_figure)
-    mo.vstack([mo.md("## 5.3 階層ベイズモデル\n種ごとの傾きと切片が共通の上位分布を持ちます。カテゴリの順序を固定し、推論結果と種名を対応させます。"),
+    mo.vstack([mo.md('## 5.3 Hierarchical Bayesian model\nSpecies-specific slopes and intercepts share hyperdistributions. Keep the category order fixed to match estimates with species names.'),
                mo.ui.table(df_sel), _figure])
     return (df, df_sel, X, Y, cl, species_order, sns,)
 
@@ -76,7 +76,7 @@ def _(pm, X, Y, cl, mo, model_view):
         _epsilon = pm.HalfNormal("epsilon", sigma=1.0)
         _mu = pm.Deterministic("mu", _X_data * _alpha[_cl_data] + _beta[_cl_data])
         pm.Normal("obs", mu=_mu, sigma=_epsilon, observed=_Y_data)
-    mo.vstack([model_view(model1), mo.md("Dataは観測の入口、Deterministicはmuの保存を担当します。")])
+    mo.vstack([model_view(model1), mo.md('Data supplies observations; Deterministic stores mu.')])
     return (model1,)
 
 
@@ -178,7 +178,7 @@ def _(pm, X, Y, cl, mo, model_view):
         _epsilon = pm.HalfNormal("epsilon", sigma=1.0)
         _mu = pm.Deterministic("mu", _X_data * _alpha[_cl_data] + _beta[_cl_data])
         pm.Normal("obs", mu=_mu, sigma=_epsilon, observed=_Y_data)
-    mo.vstack([mo.md("### コラム：モデルの構成要素"), model_view(model2), model_view(model3)])
+    mo.vstack([mo.md('### Model components'), model_view(model2), model_view(model3)])
     return (model2, model3,)
 
 
@@ -202,7 +202,7 @@ def _(df, export_table, mo):
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
     import time
-    from notebook_data import DATA_ROOT
+    from mod_load_data import DATA_ROOT
     mo.stop(not export_table.value, mo.md("Click Save Excel preview."))
     _folder = DATA_ROOT.parent / ".cache" / "exports"
     _folder.mkdir(parents=True, exist_ok=True)

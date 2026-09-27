@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -34,7 +34,7 @@ def _(mo, pm, model_view):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.md("## 4.7〜4.9\n試行回数を50に増やす例と、事前分布を[0.1,0.9]に制限する例を比較します。制限したモデルはBeta(3,4)を同区間で切断した事後分布です。")
+    _introduction = mo.md('## 4.7 to 4.9\nCompare 50 trials with a prior restricted to [0.1,0.9]. The restricted model has a Beta(3,4) posterior truncated to that interval.')
     # - 50回中20回成功のモデルはBeta(21,31)と比較できる。
     with pm.Model() as model3:
         _p = pm.Uniform("p", lower=0.0, upper=1.0)
@@ -43,7 +43,7 @@ def _(mo, pm, model_view):
     with pm.Model() as model4:
         _p = pm.Uniform("p", lower=0.1, upper=0.9)
         pm.Binomial("X_obs", p=_p, n=5, observed=2)
-    mo.vstack([model_view(model3), model_view(model4)])
+    mo.vstack([_introduction, model_view(model3), model_view(model4)])
     return (model3, model4,)
 
 

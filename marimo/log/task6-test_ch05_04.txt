@@ -1,0 +1,43 @@
+Checking ch05_04_latent: book
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>NUTS: [p, mus, taus]
+>BinaryGibbsMetropolis: [s]
+Sampling 1 chain for 1_000 tune and 2_000 draw iterations (1_000 + 2_000 draws total) took 43 seconds.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>NUTS: [p, mus, sigmas]
+>BinaryGibbsMetropolis: [s]
+Sampling 1 chain for 1_000 tune and 1_000 draw iterations (1_000 + 1_000 draws total) took 22 seconds.
+Chain 0 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+Sequential sampling (4 chains in 1 job)
+CompoundStep
+>NUTS: [p, mu0, delta0, taus]
+>BinaryGibbsMetropolis: [s]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 195 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+idata1: divergences=0
+idata2: divergences=0
+idata3: divergences=0
+Passed: ch05_04_latent
+
+Checking sample_ch05_04_simplified: book
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>BinaryGibbsMetropolis: [s]
+>NUTS: [mus, taus]
+Sampling 1 chain for 1_000 tune and 2_000 draw iterations (1_000 + 2_000 draws total) took 39 seconds.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>BinaryGibbsMetropolis: [s]
+>NUTS: [mus, sigmas]
+Sampling 1 chain for 1_000 tune and 1_000 draw iterations (1_000 + 1_000 draws total) took 29 seconds.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+idata1: divergences=0
+idata2: divergences=0
+Passed: sample_ch05_04_simplified
+

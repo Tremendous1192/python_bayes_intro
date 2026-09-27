@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 

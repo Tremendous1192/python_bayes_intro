@@ -1,15 +1,21 @@
 # - 作成日: 2026-09-27
 # - 目的: 診断表示が発散数とチェーン選択を正しく反映することを検証する。
 # - 役割: Notebook専用の表示検証。重いMCMCは再実行しない。
-# - 使用: uv run --locked --group notebook python notebooks/test_notebook_plots.py
+# - 使用: uv run --locked --group notebook python tests/test_notebook_plots.py
 # - 制約: 合成DataTree、matplotlibの画面なし描画。
 # - 非対応: 統計的収束の保証・VS Code画面操作・EXE。
+import sys
+from pathlib import Path
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
+
 import matplotlib
 matplotlib.use("Agg")
 import numpy as np
 import xarray as xr
 
-from notebook_plots import inference_view
+from mod_plots import inference_view
 
 
 def test_diagnostics_display() -> None:

@@ -1,10 +1,16 @@
 # - 作成日: 2026-09-27
 # - 目的: 効果検証の標準化・座標・縮小事前分布・予測を検査する。
 # - 役割: Notebook専用の本実行検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch06_02.py
+# - 使用: uv run --locked --group notebook python tests/test_ch06_02.py
 # - 制約: 新規プロセス、CPU逐次推論、ローカルデータ。
 # - 非対応: GUI・EXE・因果関係の保証。
 from types import SimpleNamespace
+
+import sys
+from pathlib import Path
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

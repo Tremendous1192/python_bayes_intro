@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -34,7 +34,7 @@ def _(mo, np, plt):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    from notebook_data import load_data
+    from mod_load_data import load_data
     import seaborn as sns
     df = load_data("iris.csv")
     df1 = df.query('species == "setosa"')
@@ -44,7 +44,7 @@ def _(mo, np, plt):
     sns.histplot(data=df1, x="sepal_length", bins=np.arange(4.0, 6.2, 0.2), kde=True, ax=_axis)
     _axis.set(title="Setosa sepal length", xlabel="Sepal length", ylabel="Count")
     plt.close(_figure)
-    mo.vstack([mo.md("## 5.1 データ分布の推定\n50件と先頭5件の推論を比較します。精度tauを使う例はsigmaへの事前分布も変わるため、単なる変数名変更ではありません。"),
+    mo.vstack([mo.md('## 5.1 Estimating a data distribution\nCompare all 50 observations with the first 5. A prior on precision tau also changes the implied prior on sigma.'),
                mo.ui.table(df.iloc[[0, 1, 50, 51, 100, 101]]), mo.ui.table(df.head()), _figure])
     return (df1, X, X_less, sns,)
 
@@ -112,9 +112,9 @@ def _(mo, inference_view, idata1, idata2, idata3):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.vstack([mo.md("### 全50件"), idata1, inference_view(idata1, ["mu", "sigma"]),
-               mo.md("### 先頭5件\n発散を避けるため、移植版はtarget_accept=0.95で実行します。"), inference_view(idata2, ["mu", "sigma"]),
-               mo.md("### 精度tauによるモデル"), inference_view(idata3, ["mu", "sigma"])])
+    mo.vstack([mo.md('### All 50 observations'), idata1, inference_view(idata1, ["mu", "sigma"]),
+               mo.md('### First 5 observations\nThis port uses target_accept=0.95 to reduce divergences.'), inference_view(idata2, ["mu", "sigma"]),
+               mo.md('### Model using precision tau'), inference_view(idata3, ["mu", "sigma"])])
     return
 
 

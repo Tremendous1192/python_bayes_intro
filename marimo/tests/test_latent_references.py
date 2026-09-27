@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: 3クラスとFAQのカテゴリ・順序・チェーン選択を検査する。
 # - 役割: Notebook専用の本実行検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_latent_references.py
+# - 使用: uv run --locked --group notebook python tests/test_latent_references.py
 # - 制約: 固定データ、新規プロセス、同時推論1件、各教材3600秒。
 # - 非対応: 単鎖の収束保証・GUI・EXE。
 import importlib
@@ -9,6 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
+
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

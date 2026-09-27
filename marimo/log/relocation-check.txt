@@ -1,0 +1,74 @@
+Interpreter: C:\dev\python_bayes_intro\marimo\.venv\Scripts\python.exe
+Python: 3.14.7 (main, Sep 24 2026, 17:57:14) [MSC v.1944 64 bit (AMD64)]
+Passed: fresh import test_ch01_ch03.py, unchanged test bodies
+Passed: fresh import test_ch02.py, unchanged test bodies
+Passed: fresh import test_ch04.py, unchanged test bodies
+Passed: fresh import test_ch05_01.py, unchanged test bodies
+Passed: fresh import test_ch05_02_03.py, unchanged test bodies
+Passed: fresh import test_ch05_04.py, unchanged test bodies
+Passed: fresh import test_ch06_01.py, unchanged test bodies
+Passed: fresh import test_ch06_02.py, unchanged test bodies
+Passed: fresh import test_ch06_03.py, unchanged test bodies
+Passed: fresh import test_irt_backend.py, unchanged test bodies
+Passed: fresh import test_latent_references.py, unchanged test bodies
+Passed: fresh import test_latent_views.py, unchanged test bodies
+Passed: fresh import test_notebook_data.py, unchanged test bodies
+Passed: fresh import test_notebook_plots.py, unchanged test bodies
+Command: python -B tests/test_notebook_data.py
+Checking pinned datasets and rejected input
+Passed: pinned data, schemas and rejected input
+
+Command: python -B tests/test_notebook_plots.py
+Checking diagnostic display and chain selection
+Passed: diagnostic display
+
+Command: python -B tests/test_ch01_ch03.py
+Checking chapter 01
+Passed: chapter 01
+
+Checking chapter 03
+Passed: chapter 03
+
+Sampling: [x]
+Command: python -B tests/test_ch02.py
+Checking ch02_discrete
+Passed: ch02_discrete
+
+Checking ch02_normal
+Passed: ch02_normal
+
+Checking ch02_uniform_beta
+Passed: ch02_uniform_beta
+
+Checking ch02_intervals
+Passed: ch02_intervals
+
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Sampling: [p]
+Sampling: [p]
+Sampling: [x]
+Command: python -B tests/test_ch04.py ch04_posterior off
+Checking ch04_posterior: off
+Passed: ch04_posterior, off
+
+Command: python -B tests/test_ch06_03.py off
+Checking IRT preparation and inference gate
+Passed: IRT preparation
+
+Command: python -B tests/test_ch06_03.py spawn
+Checking IRT Windows workers; not a convergence test
+Passed: IRT Windows workers
+
+Only 5 samples per chain. Reliable r-hat and ESS diagnostics require longer chains for accurate estimate.
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [theta, a, b]
+Sampling 2 chains for 5 tune and 5 draw iterations (10 + 10 draws total) took 40 seconds.
+The number of samples is too small to check convergence reliably.
+Passed: all 14 imports, unchanged test bodies, 7 relocated command cases

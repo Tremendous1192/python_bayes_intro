@@ -22,10 +22,10 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
-    from notebook_data import load_data
-    from two_class_model import two_class_model
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
+    from mod_load_data import load_data
+    from model_two_class import two_class_model
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view, load_data, two_class_model,)
 
 

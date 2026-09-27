@@ -1,0 +1,7 @@
+Checking IRT C and Numba backends on all 50000 responses
+c linker: VMLinker
+c: first=13.444s; warm pair=0.077242s
+numba linker: NumbaLinker
+numba: first=17.861s; warm pair=0.009046s
+Passed: IRT backend comparison
+

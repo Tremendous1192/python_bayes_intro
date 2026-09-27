@@ -1,0 +1,18 @@
+Checking regression effects: book
+Initializing NUTS using jitter+adapt_diag...
+C:\dev\python_bayes_intro\marimo\.venv\Lib\site-packages\pytensor\link\c\cmodule.py:2939: UserWarning: PyTensor could not link to a BLAS installation. Operations that might benefit from BLAS will be severely degraded.
+This usually happens when PyTensor is installed via pip. We recommend it be installed via conda/mamba/pixi instead.
+Alternatively, you can use an experimental backend such as Numba or JAX that perform their own BLAS optimizations, by setting `pytensor.config.mode == 'NUMBA'` or passing `mode='NUMBA'` when compiling a PyTensor function.
+For more options and details see https://pytensor.readthedocs.io/en/latest/troubleshooting.html#how-do-i-configure-test-my-blas-library
+  warnings.warn(
+Sequential sampling (4 chains in 1 job)
+NUTS: [alpha, beta, epsilon]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 35 seconds.
+Initializing NUTS using jitter+adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [epsilon, tau, lam, c2, z, beta]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 132 seconds.
+idata1: divergences=0
+idata2: divergences=0
+Passed: regression effects
+

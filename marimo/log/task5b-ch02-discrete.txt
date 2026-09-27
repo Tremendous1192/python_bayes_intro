@@ -1,0 +1,6 @@
+Checking ch02_discrete
+Sampling: [x]
+Sampling: [x]
+Sampling: [x]
+Passed: ch02_discrete
+

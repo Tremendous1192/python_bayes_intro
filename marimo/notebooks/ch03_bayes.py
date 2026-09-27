@@ -20,7 +20,7 @@ def _():
     import marimo as mo
     import numpy as np
     import matplotlib.pyplot as plt
-    mo.md("## 第3章 ベイズ推論とは\n観測前の知識を事前分布で表します。ここでは区間[0, 1]の一様密度を確認し、第4章で観測値による更新を実装します。")
+    mo.md('## Chapter 3: Bayesian inference\nA prior represents knowledge before observing data. Check the uniform density on [0, 1]; Chapter 4 updates it using observations.')
     return (np, plt,)
 
 

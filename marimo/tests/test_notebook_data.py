@@ -1,10 +1,16 @@
 # - 作成日: 2026-09-27
 # - 目的: 固定教材データの内容・型・未知入力の拒否を確認する。
 # - 役割: Notebook専用のオフライン回帰検査。
-# - 使用: uv run --locked --group notebook python notebooks/test_notebook_data.py
+# - 使用: uv run --locked --group notebook python tests/test_notebook_data.py
 # - 制約: 初回データ取得済み。読取のみ、通信なし。
 # - 非対応: 推論・画面操作・EXE配布。
-from notebook_data import load_data
+import sys
+from pathlib import Path
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
+
+from mod_load_data import load_data
 
 
 def test_notebook_data() -> None:

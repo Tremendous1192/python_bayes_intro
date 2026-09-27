@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: 第4章の最尤値・事後分布・反復条件・離散変数を検査する。
 # - 役割: Notebook専用の新規プロセス検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch04.py
+# - 使用: uv run --locked --group notebook python tests/test_ch04.py
 # - 制約: 各ケース1800秒。Book runの結果と短縮検査を区別する。
 # - 非対応: VS Code画面操作・EXE配布。
 import importlib
@@ -9,6 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
+
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

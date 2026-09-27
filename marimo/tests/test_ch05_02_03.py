@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: 回帰の入力対応、事後予測、階層のカテゴリ対応、Excel保存を検査する。
 # - 役割: Notebook専用の本実行検証。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch05_02_03.py
+# - 使用: uv run --locked --group notebook python tests/test_ch05_02_03.py
 # - 制約: 各Notebook1800秒、同時推論1。固定データとローカル出力を使用。
 # - 非対応: 画面操作・EXE配布。未調整例の収束成功は要求しない。
 import importlib
@@ -9,6 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
+
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

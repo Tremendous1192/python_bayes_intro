@@ -1,0 +1,7 @@
+Checking chapter 01
+Sampling: [x]
+Passed: chapter 01
+
+Checking chapter 03
+Passed: chapter 03
+

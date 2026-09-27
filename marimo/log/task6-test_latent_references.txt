@@ -1,0 +1,46 @@
+Checking sample_three_class: book
+Sampling: [x]
+Sampling: [p]
+C:\dev\python_bayes_intro\marimo\.venv\Lib\site-packages\pytensor\link\c\cmodule.py:2939: UserWarning: PyTensor could not link to a BLAS installation. Operations that might benefit from BLAS will be severely degraded.
+This usually happens when PyTensor is installed via pip. We recommend it be installed via conda/mamba/pixi instead.
+Alternatively, you can use an experimental backend such as Numba or JAX that perform their own BLAS optimizations, by setting `pytensor.config.mode == 'NUMBA'` or passing `mode='NUMBA'` when compiling a PyTensor function.
+For more options and details see https://pytensor.readthedocs.io/en/latest/troubleshooting.html#how-do-i-configure-test-my-blas-library
+  warnings.warn(
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>NUTS: [p, mus, taus]
+>CategoricalGibbsMetropolis: [s]
+Sampling 1 chain for 1_000 tune and 2_000 draw iterations (1_000 + 2_000 draws total) took 156 seconds.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+Sequential sampling (1 chains in 1 job)
+CompoundStep
+>NUTS: [p, mus, sigmas]
+>CategoricalGibbsMetropolis: [s]
+Sampling 1 chain for 1_000 tune and 2_000 draw iterations (1_000 + 2_000 draws total) took 1054 seconds.
+Chain 0 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Only one chain was sampled, this makes it impossible to run some convergence checks
+Sequential sampling (4 chains in 1 job)
+CompoundStep
+>NUTS: [p, mu0, delta0, delta1, taus]
+>CategoricalGibbsMetropolis: [s]
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 454 seconds.
+C:\dev\python_bayes_intro\marimo\.venv\Lib\site-packages\arviz_stats\base\diagnostics.py:90: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+idata3: divergences=0
+idata4: divergences=0
+idata5: divergences=0
+Passed: sample_three_class
+
+Checking sample_latent_faq: book
+Sequential sampling (5 chains in 1 job)
+CompoundStep
+>NUTS: [p, mus, taus]
+>BinaryGibbsMetropolis: [s]
+Sampling 5 chains for 1_000 tune and 1_000 draw iterations (5_000 + 5_000 draws total) took 144 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+FAQ: divergences=0
+Passed: sample_latent_faq
+

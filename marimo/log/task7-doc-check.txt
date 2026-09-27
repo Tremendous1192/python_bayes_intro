@@ -1,0 +1,3 @@
+Passed: 105 local links and current command paths
+Passed: VS Code JSON syntax; only the folder comment changed
+Passed: requirement edits preserve all other pre-existing user content

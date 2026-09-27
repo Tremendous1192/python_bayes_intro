@@ -1,13 +1,17 @@
 # - 作成日: 2026-09-27
 # - 目的: 第2章の分布と区間を解析解・独立したSciPy実装で確認する。
 # - 役割: Notebook専用の数値回帰検査。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch02.py
+# - 使用: uv run --locked --group notebook python tests/test_ch02.py
 # - 制約: 固定データ準備済み。各Notebookは新規プロセスで順次実行。
 # - 非対応: 画面操作・EXE配布。
 import importlib
 import subprocess
 import sys
 from pathlib import Path
+
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

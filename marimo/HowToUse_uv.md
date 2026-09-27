@@ -11,7 +11,7 @@
 2. 統合ターミナルで次を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 uv --version
 dot -V
@@ -82,7 +82,8 @@ call env.cmd check
 ```
 
 - `configure`は専用`.venv`に起動時設定を登録し、新規Pythonで反映を確認します。
-- 登録器は[log/configure_runtime.py](log/configure_runtime.py)です。標準ライブラリだけを使います。
+- 登録処理と回帰テストは[env.cmd](env.cmd)に内蔵しています。登録処理は標準ライブラリだけを使います。
+- 登録後の検証は`call env.cmd test`です。試験用ファイルは`log/_work/`に限定します。
 - `check`は現在の`env.cmd`と登録内容の一致を確認します。
 - `--locked`は依存定義とロックの不一致をエラーにします。`--frozen`で回避しません。
 - `--group notebook`はmarimoなどのNotebook用依存を含めます。
@@ -92,10 +93,10 @@ call env.cmd check
 
 ## 4. 同じウィンドウでNotebookを準備する
 
-1. 対象の`2026`フォルダがワークスペースのルートとして表示されていることを確認します。
-   - 親の`C:\dev`などを開いている場合は、`File: Add Folder to Workspace`で`C:\dev\python_bayes_intro\marimo\2026`を現在のウィンドウへ追加します。
+1. 対象の`marimo`フォルダがワークスペースのルートとして表示されていることを確認します。
+   - 親の`C:\dev`などを開いている場合は、`File: Add Folder to Workspace`で`C:\dev\python_bayes_intro\marimo`を現在のウィンドウへ追加します。
    - 子フォルダの`.vscode/settings.json`は、親だけを開いた状態では自動適用されません。
-   - ワークスペースを保存する場合は`C:\dev\`内へ保存し、既存ファイルを上書きしません。
+   - ワークスペースを保存する場合は`C:\dev\python_bayes_intro\marimo\log\`以下へ保存し、既存ファイルを上書きしません。
 2. 現在のウィンドウで公式拡張機能`marimo-team.vscode-marimo`とMicrosoft Pythonの有効化を確認します。
    - 確認対象のmarimo拡張機能は0.18.1です。更新・追加導入は自動実行しません。
    - フォルダの信頼確認が出た場合は、自分の学習用フォルダとして確認します。
@@ -104,7 +105,7 @@ call env.cmd check
 4. [marimo利用手順](HowToUse_marimo.md)に従い、Notebookのカーネルに次を選びます。
 
 ```text
-C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
+C:\dev\python_bayes_intro\marimo\.venv\Scripts\python.exe
 ```
 
 - 別ウィンドウ・専用ユーザーデータ領域の作成は不要です。
@@ -121,7 +122,7 @@ C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
 1. uvや検査コマンドを使うターミナルで次を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd
 call env.cmd check
 ```
@@ -167,7 +168,7 @@ call env.cmd configure
 - 登録解除が必要な場合だけ、カーネルを停止して次を実行します。
 
 ```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
+cd /d C:\dev\python_bayes_intro\marimo
 call env.cmd unconfigure
 ```
 

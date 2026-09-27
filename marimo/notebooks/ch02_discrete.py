@@ -33,7 +33,6 @@ def _(mo, pm):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.md("## 2.1 ベルヌーイ分布・2.2 二項分布\n成功確率0.5を固定し、試行回数を1、5、50と変えます。")
     priors = {}
     # - 成功・失敗の1回試行をモデル化する。
     with pm.Model() as model1:
@@ -47,6 +46,7 @@ def _(mo, pm):
     with pm.Model() as model3:
         pm.Binomial("x", p=0.5, n=50)
         priors["Binomial n=50"] = pm.sample_prior_predictive(draws=500, random_seed=42)
+    mo.md('## 2.1 Bernoulli and 2.2 Binomial distributions\nKeep the success probability at 0.5 and compare 1, 5, and 50 trials.')
     return (priors,)
 
 

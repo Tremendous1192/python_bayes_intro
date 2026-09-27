@@ -22,8 +22,8 @@ def _():
     import matplotlib.pyplot as plt
     import pymc as pm
     from scipy import stats
-    from notebook_sampling import sample_model, posterior_mean
-    from notebook_plots import inference_view, model_view
+    from mod_sampling import sample_model, posterior_mean
+    from mod_plots import inference_view, model_view
     return (mo, np, plt, pm, stats, sample_model, posterior_mean, inference_view, model_view,)
 
 
@@ -34,7 +34,7 @@ def _(mo, pm, model_view):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    mo.md("## 図4.4用の補足モデル\n離散の未観測変数Y_predを含むため、PyMCの複合ステップを使用します。Colabのダウンロード処理は不要です。")
+    _introduction = mo.md('## Supplement for Figure 4.4\nThe unobserved discrete variable Y_pred requires a PyMC compound step. Save the PDF locally using the export button.')
     # - 予測成功数を未知変数として追加する元のモデルを保持する。
     with pm.Model() as prediction_model:
         _p = pm.Uniform("p", lower=0.0, upper=1.0)
@@ -46,7 +46,7 @@ def _(mo, pm, model_view):
         _y = pm.Binomial("Y_pred", p=_p, n=1000)
         _p2 = pm.Beta("p2", alpha=_y + 1, beta=1001 - _y)
         pm.Binomial("X_obs", p=_p2, n=50, observed=20)
-    mo.vstack([model_view(prediction_model), model_view(nested_model)])
+    mo.vstack([_introduction, model_view(prediction_model), model_view(nested_model)])
     return (prediction_model, nested_model,)
 
 
@@ -110,7 +110,7 @@ def _(export_pdf, mo, nested_result, plt):
     """
     import time
     import arviz as az
-    from notebook_data import DATA_ROOT
+    from mod_load_data import DATA_ROOT
     mo.stop(not export_pdf.value, mo.md("Click Save PDF to export the trace."))
     _collection = az.plot_trace_dist(nested_result, var_names=["p", "p2", "Y_pred"],
                                      compact=False, backend="matplotlib")

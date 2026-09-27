@@ -1,10 +1,16 @@
 # - 作成日: 2026-09-27
 # - 目的: 5.1節のデータ抽出・推定値・精度変換を検証する。
 # - 役割: Notebook専用の新規セッション検査。
-# - 使用: uv run --locked --group notebook python notebooks/test_ch05_01.py
+# - 使用: uv run --locked --group notebook python tests/test_ch05_01.py
 # - 制約: Book runを実行。固定入力、同時推論1。
 # - 非対応: 画面操作・EXE配布。
 from types import SimpleNamespace
+
+import sys
+from pathlib import Path
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")

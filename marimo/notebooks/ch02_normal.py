@@ -33,7 +33,7 @@ def _(mo, np, plt, stats):
     - 前提: 上流セル実行済み。副作用: 計算・表示。失敗時は元の例外を伝える。
     - 使用例: このセルを実行し、下流の表示を確認する。
     """
-    from notebook_data import load_data
+    from mod_load_data import load_data
     iris = load_data("iris.csv")
     setosa = iris.loc[iris["species"] == "setosa", "sepal_length"]
     _figure, _axes = plt.subplots(1, 2, figsize=(10, 3))
@@ -45,7 +45,7 @@ def _(mo, np, plt, stats):
     _axes[1].set(xlabel="Value", ylabel="Density")
     _axes[1].legend()
     plt.close(_figure)
-    mo.vstack([mo.md("## 2.3 正規分布\nIrisの観測分布と、平均・標準偏差による密度の違いを確認します。"), _figure])
+    mo.vstack([mo.md('## 2.3 Normal distributions\nCompare the observed Iris distribution and densities with different means and standard deviations.'), _figure])
     return (setosa,)
 
 

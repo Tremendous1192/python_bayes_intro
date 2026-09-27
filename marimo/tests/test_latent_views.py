@@ -1,11 +1,16 @@
 # - 作成日: 2026-09-27
 # - 目的: 潜在モデルの実際の表示セルで観測と推論の凡例を区別できることを検査する。
 # - 役割: Notebook専用の合成事後分布による表示検証。MCMCの再計算は行わない。
-# - 使用: uv run --locked --group notebook python notebooks/test_latent_views.py
-# - 制約: 合成標本、固定観測、.cache/validation内の画像だけを保存する。
+# - 使用: uv run --locked --group notebook python tests/test_latent_views.py
+# - 制約: 合成標本、固定観測、log/validation内の画像だけを保存する。
 # - 非対応: 合成標本での統計的受入・VS Code画面操作・EXE。
 import importlib
 from pathlib import Path
+
+import sys
+
+# - 直接実行とWindows子プロセスで、移動先から同じNotebookを読み込む。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "notebooks"))
 
 import matplotlib
 matplotlib.use("Agg")
@@ -23,7 +28,7 @@ def test_latent_legends() -> None:
     """
     print("Checking latent plots with synthetic posterior samples", flush=True)
     original_close = plt.close
-    target = Path(__file__).resolve().parents[1] / ".cache" / "validation"
+    target = Path(__file__).resolve().parents[1] / "log" / "validation"
     target.mkdir(exist_ok=True)
     # - 検証失敗時も描画APIの差替えを必ず復元する。
     try:
