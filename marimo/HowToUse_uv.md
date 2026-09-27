@@ -5,6 +5,10 @@
 - 対象：Windows 11 AMD64、GIL付きCPython 3.14.7、uv 0.11.7。
 - 初回は第1～4節、準備済みなら第5節から始めます。
 
+## 0. 仮想環境(venv)を作成するフォルダをルートフォルダとする
+1. `File` タブの `Open Folder` で仮想環境(venv)を作成するフォルダを開く。
+   * `C:\dev\python_bayes_intro\marimo>`
+
 ## 1. 現在のターミナルを準備する
 
 1. 現在のVS Codeで`Terminal: Select Default Profile`から`Command Prompt`を選びます。
@@ -90,6 +94,11 @@ call env.cmd check
 - 初回・`.venv`再作成後・`env.cmd`変更後は`configure`を実行します。
 - 設定変更・解除の前に、この`.venv`を使うNotebookカーネルを停止します。
 - 設定値の原本は`env.cmd`です。生成物は手編集しません。
+
+## 3.5. `.venv` のあるフォルダをルートフォルダにしていれば marimo 拡張機能でノートブックを編集する
+1. marimoのインポートと起動ができるようになっていれば、`.py`ファイル右上のボタンからノートブックに切り替えることができる。
+1. Jupyter Notebookと同様にKernelを選択して各セルを編集して、Runすればプログラムを実行できる。
+
 
 ## 4. 同じウィンドウでNotebookを準備する
 
