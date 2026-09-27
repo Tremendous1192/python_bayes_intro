@@ -1,0 +1,14 @@
+{
+  "iris.csv": {
+    "url": "https://raw.githubusercontent.com/mwaskom/seaborn-data/8504c04d4b02ac56527949baafb416e5864698b6/iris.csv",
+    "sha256": "9cc1c345c71bcc9b486b74cbf6063fa66f4bb5e0f603a4b3c3471ec2e5e8e355"
+  },
+  "test_scores.csv": {
+    "url": "https://raw.githubusercontent.com/pymc-devs/pymc-examples/3bbc6e0dd3e2d3e1d146e57a310f7fe560ce5070/examples/data/test_scores.csv",
+    "sha256": "cc354183b4e3312271e0a6d0ebba44a92e4af48b31db2e46945ed64aeb45517e"
+  },
+  "irt-sample.csv": {
+    "url": "https://raw.githubusercontent.com/makaishi2/samples/4226155ce14f698312b0a7728477e8ec976215a8/data/irt-sample.csv",
+    "sha256": "2f107d42da1e757de547a718daa22c139c877409c54e1ea57abcd939a20bd834"
+  }
+}

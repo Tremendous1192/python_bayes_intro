@@ -2,7 +2,7 @@
 
 - 書籍『Pythonでスラスラわかる ベイズ推論「超」入門』を、VS Code・uv・marimoで学ぶための環境です。
 - 現在のVS Codeウィンドウとログイン状態を使い、プロジェクト専用のPythonで実行します。
-- 書籍の本編11本・参考5本の移植は後続作業です。
+- 書籍の本編11本・参考4本、計15本の学習内容を`notebooks/`へ移植しています。
 - 作成日：2026-09-26。更新日：2026-09-27。
 
 ## まずはここから
@@ -39,14 +39,15 @@ call env.cmd check
 | [.python-version](.python-version) | 使用するPythonのパッチ版 |
 | [uv.lock](uv.lock) | uvが生成した依存・配布物の固定情報 |
 | [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除の入口 |
-| [configure_runtime.py](configure_runtime.py) | 専用.venvへの起動設定の生成・確認・解除 |
-| [test_configure_runtime.py](test_configure_runtime.py) | 所有判定・繰返し・解除・新規プロセスの検証 |
+| [log/](log/) | 環境設定・データ再取得の補助コード、検証コード・記録 |
 | [.vscode/settings.json](.vscode/settings.json) | Python候補・marimoの共有設定 |
 | [examples/basic_usage.py](examples/basic_usage.py) | 平均・表・図・ボタンの8セルの例 |
 | [examples/test_basic_usage.py](examples/test_basic_usage.py) | 例を新規プロセスで検証するNotebook専用コード |
+| [notebooks/](notebooks/) | 書籍のmarimo Notebook、必要な共通処理、章別テスト |
+| [data/README.md](data/README.md) | データの取得元・固定コミット・再取得手順 |
 | [HowToUse_uv.md](HowToUse_uv.md) | 初回導入・日常操作・更新・復元 |
 | [HowToUse_marimo.md](HowToUse_marimo.md) | 拡張機能での作成・編集・実行・保存・画面確認 |
-| [uv_要件.md](要件/uv_要件.md) / [marimo_要件.md](要件/marimo_要件.md) | 環境とガイドの要件 |
+| [uv_要件.md](要件/uv_要件.md) / [marimo_要件.md](要件/marimo_要件.md) / [移植_要件.md](要件/移植_要件.md) | 環境・ガイド・移植の要件 |
 | `.venv/` | プロジェクト専用のPython環境と生成された起動フック |
 | `.cache/` | Python本体・キャッシュ・登録記録・復元用の退避 |
 
@@ -58,7 +59,7 @@ call env.cmd check
 
 - ターミナル：`call env.cmd`が、呼出元と子プロセスにuv用の設定を適用します。
 - Notebook：選択した専用`.venv`が、Python起動時に登録済み設定を読みます。
-- `configure_runtime.py`は、親のVS Codeへ環境変数を遡って書き込むための処理ではありません。
+- `log/configure_runtime.py`は、親のVS Codeへ環境変数を遡って書き込むための処理ではありません。
 - 補助コードの追加理由は、拡張機能から起動されるPythonに影響範囲を限定するためです。
 - Notebook専用Pythonでは、個人領域参照もプロジェクト内へ切り替えます。
 - ターミナルとVS Code本体の個人領域・ログイン状態は切り替えません。
@@ -68,7 +69,7 @@ call env.cmd check
 
 | 生成物 | 原本・生成方法 |
 | --- | --- |
-| `.venv/Lib/site-packages/_bayes_runtime.py` | `configure_runtime.py`と`env.cmd`から生成する設定適用コード |
+| `.venv/Lib/site-packages/_bayes_runtime.py` | `log/configure_runtime.py`と`env.cmd`から生成する設定適用コード |
 | `.venv/Lib/site-packages/000_bayes_runtime.pth` | 同じ登録器から生成する読込入口 |
 | `.cache/runtime-registration.json` | 生成物2本の所有確認用SHA-256 |
 
@@ -93,7 +94,7 @@ call env.cmd check
 | 外部ツール | Graphviz 13.1.2、MinGW g++ 16.1.0 |
 
 - CPUで学ぶNotebook専用環境です。上位READMEのconda手順とは混用せず、EXE作成・GPU実行には使いません。
-- 指定14ライブラリに、参考Notebook「書籍評価」のExcel読込用`openpyxl`を加えています。
+- 指定14ライブラリに、5.3節のExcel保存・検証用`openpyxl`を加えています。
 - 既存記録では、15件とも基準日以前の最新安定版と一致し、互換性による版の引下げはありません。
 - 公開日時・wheel・importの過去の確認記録と、今回の再検証結果は区別します。
 
@@ -113,7 +114,7 @@ call env.cmd check
 | [torch](https://pypi.org/project/torch/2.14.0/) | 2.14.0 | 第4章の自動微分 |
 | [graphviz](https://pypi.org/project/graphviz/0.21/) | 0.21 | dot本体へのインターフェース |
 | [numba](https://pypi.org/project/numba/0.67.0/) | 0.67.0 | Notebook専用の数値JIT |
-| [openpyxl](https://pypi.org/project/openpyxl/3.1.5/) | 3.1.5 | Excel読込 |
+| [openpyxl](https://pypi.org/project/openpyxl/3.1.5/) | 3.1.5 | 5.3節のExcel保存・検証 |
 
 - `marimo`・`numba`の直接指定は`notebook`グループです。
 - PyTensorもNumbaに依存するため、`notebook`グループの省略ではNumbaを除外できません。
@@ -137,18 +138,82 @@ call env.cmd check
 
 ## 書籍Notebookの移植
 
-- 本編11本・参考5本、計16本が対象です。このフォルダへの移植は未実施です。
-- 既存記録の移植元コードセルは計3,212行です。説明・セル構造・検証を含む移植後の行数ではありません。
+- 対象は本編11本・参考4本、計15本です。原本のコードセルは計3,024行です。
+- GPU版と`書籍評価.ipynb`は対象外です。元の`.ipynb`は変更しません。
+- 長い章は学習単位で分割しています。15本は原本の件数で、移植先は20本のmarimo Notebookです。
+- 各ファイルの先頭に対応する原本を記載しています。
 
-| 移植元 | 対象 |
+| 原本の学習内容 | 移植先 |
 | --- | --- |
-| [notebooks/](../../notebooks/) | 第1～4章、5.1～5.4、6.1～6.3の11本 |
-| [sample-notebooks/](../../sample-notebooks/) | 第4章の図、潜在変数モデル簡略版、3クラス版、FAQ、書籍評価の5本 |
+| 第1章 確率分布 | [ch01_distributions.py](notebooks/ch01_distributions.py) |
+| 第2章 各種分布 | [離散分布](notebooks/ch02_discrete.py)、[正規分布](notebooks/ch02_normal.py)、[一様・ベータ分布](notebooks/ch02_uniform_beta.py)、[区間](notebooks/ch02_intervals.py) |
+| 第3章 ベイズ推論 | [ch03_bayes.py](notebooks/ch03_bayes.py) |
+| 第4章 実習 | [尤度](notebooks/ch04_likelihood.py)、[事後分布](notebooks/ch04_posterior.py)、[事前分布の比較](notebooks/ch04_prior_comparison.py) |
+| 5.1 データ分布 | [ch05_01_distribution.py](notebooks/ch05_01_distribution.py) |
+| 5.2 線形回帰 | [ch05_02_regression.py](notebooks/ch05_02_regression.py) |
+| 5.3 階層ベイズ | [ch05_03_hierarchical.py](notebooks/ch05_03_hierarchical.py) |
+| 5.4 潜在変数 | [ch05_04_latent.py](notebooks/ch05_04_latent.py) |
+| 6.1 ABテスト | [ch06_01_ab_test.py](notebooks/ch06_01_ab_test.py) |
+| 6.2 回帰の効果検証 | [ch06_02_effects.py](notebooks/ch06_02_effects.py) |
+| 6.3 IRT・ADVI | [ch06_03_irt.py](notebooks/ch06_03_irt.py) |
+| 参考 第4章の図 | [sample_ch04_figure.py](notebooks/sample_ch04_figure.py) |
+| 参考 潜在変数の簡略版 | [sample_ch05_04_simplified.py](notebooks/sample_ch05_04_simplified.py) |
+| 参考 3クラス潜在変数 | [sample_three_class.py](notebooks/sample_three_class.py) |
+| 参考 FAQ | [sample_latent_faq.py](notebooks/sample_latent_faq.py) |
 
-- `6_3_IRTによるテスト結果評価_GPU版.ipynb`は対象外です。
-- 移植時にColab処理・IPythonマジック・旧フォントライブラリ・PyMC 6／ArviZ 1のAPIと結果形式に対応します。
-- Iris・CSV・Excelなどの取得元・保存先・取得失敗時の対処は、移植時に決めます。
-- 説明・コメントは日本語、画面出力・図の文字は英語にします。
+- 共通処理は、固定データの検証、サンプラーと資源制限、ArviZ表示、複数教材で重複するモデルに限定しています。
+- 説明・コメントは日本語、画面出力・図の文字は英語です。元教材の日本語の集計キーは内部で保持します。
+- `pm.ConstantData`を`pm.Data`へ、事前予測の`samples`を`draws`へ移行しています。
+- PyMC 6のDataTreeとArviZ 1のPlotCollectionを使い、信用区間は元教材に合わせて94% HDIを明示しています。
+- ベータ密度の正規化式、潜在成分を種名と断定する表示、IRTの集計順序と固定IDの混在を修正しています。
+- 5.1節の5件推論は発散を避けるため`target_accept=0.95`に調整しています。モデル・観測は保持しています。
+- 6.2節の縮小モデルは`target_accept=0.99`に調整し、本実行で発散1件が0件になることを確認しています。
+- 収束しにくい比較例も教材として残しています。実行完了と収束成功は別に判断します。
+
+### データ準備と実行
+
+- 同梱のCSVを使い、Notebookの読込時にハッシュを検証します。
+- CSVの再取得が必要な場合だけ、[データ手順](data/README.md)の保守用コマンドを使います。
+- ハッシュ不一致は自動上書きしません。Notebookも不一致を検出して停止します。
+- 対応表の`.py`をVS Codeのmarimo拡張機能で開き、登録済み`.venv`を選びます。
+- MCMC教材では`Sampling mode`を選び、`Run inference`を押します。変更だけで重い計算を始めない構成です。
+- `Book run`が標準です。チェーン数・反復数・乱数種を明示し、CPUのPyMCサンプラーでモデルごとに順番に実行します。
+- 通常は同時チェーン1・BLAS1、IRTだけ同時チェーン2とし、各プロセスのBLAS1・Numba上限2に制限します。
+- IRTの本実行では4チェーン分のプロセスを作ります。標本を同時生成するのは2チェーンで、Numbaは合計最大4スレッドです。
+- 通常はCバックエンド、IRTだけは全観測でCとの密度・勾配一致を検証したNumbaを使います。依存追加はありません。
+- `Quick check`はdraw 100・tune 150以下の配線確認です。収束・精度の評価には使いません。
+- IRTの`Book run`は全50,000回答、MCMCの後にADVI 20,000回です。短縮時も観測は間引きません。
+- IRTのADVIは短縮時500回・100標本です。ADVI標本をMCMCのチェーンとして診断しません。
+- IRTの能力値は原本に合わせ、MCMCは標本標準偏差、ADVIは母標準偏差で変換します。
+- PDF・Excelは専用の保存ボタンから`.cache/exports/`へ新規保存します。既存ファイルは上書きしません。
+- PyTensorのBLAS未リンク警告が出る環境です。依存やコンパイラを自動変更しません。
+
+### 章別の再検証
+
+- 次のコマンドは、新規プロセスで`Book run`の実行・数値・出力を検証します。長い推論を同時に起動しません。
+- 実施済みの結果・所要時間・警告・未実施項目は[移植検証](log/移植検証.md)に記録します。
+
+```cmd
+cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd
+uv run --locked --offline --group notebook python notebooks/test_notebook_data.py
+uv run --locked --offline --group notebook python notebooks/test_ch01_ch03.py
+uv run --locked --offline --group notebook python notebooks/test_ch02.py
+uv run --locked --offline --group notebook python notebooks/test_ch04.py
+uv run --locked --offline --group notebook python notebooks/test_ch05_01.py
+uv run --locked --offline --group notebook python notebooks/test_ch05_02_03.py
+uv run --locked --offline --group notebook python notebooks/test_ch05_04.py
+uv run --locked --offline --group notebook python notebooks/test_latent_references.py
+uv run --locked --offline --group notebook python notebooks/test_ch06_01.py
+uv run --locked --offline --group notebook python notebooks/test_ch06_02.py
+uv run --locked --offline --group notebook python notebooks/test_irt_backend.py
+uv run --locked --offline --group notebook python notebooks/test_ch06_03.py book
+uv run --locked --offline --group notebook python notebooks/test_notebook_plots.py
+uv run --locked --offline --group notebook python notebooks/test_latent_views.py
+```
+
+- `app.run(defs=...)`は新規セッションでの計算・表示生成の検査です。VS Code画面のクリック・保存・再起動の検査とは区別します。
+- [PyMCのsample](https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sample.html)・[fit](https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.fit.html)、[ArviZのforest plot](https://python.arviz.org/projects/plots/en/stable/api/generated/arviz_plots.plot_forest.html)を固定環境の実装と照合しています。
 
 ## 検証
 
@@ -159,7 +224,7 @@ cd /d C:\dev\python_bayes_intro\marimo\2026
 call env.cmd
 call env.cmd check
 uv lock --check
-uv run --locked --group notebook python test_configure_runtime.py
+uv run --locked --group notebook python log/test_configure_runtime.py
 uv run --locked --group notebook marimo check examples/basic_usage.py
 uv run --locked --group notebook python examples/test_basic_usage.py
 ```
@@ -172,6 +237,7 @@ uv run --locked --group notebook python examples/test_basic_usage.py
 
 ### 既存ウィンドウ対応（2026-09-27）
 
+- 以下のTask 1～7は環境対応時の記録です。今回の移植Task 1～13の結果は[移植検証](log/移植検証.md)で確認します。
 - Task 1～7は順番に扱い、統合していません。
 - Task 1：使い捨て仮想環境で起動フック、子へのUTF-8継承、一時保存先、親環境の保持を確認しました。
 - Task 2：ターミナル設定、引数エラー、登録器未配置時の案内を確認しました。
@@ -179,7 +245,7 @@ uv run --locked --group notebook python examples/test_basic_usage.py
 - Task 4：プロジェクト設定の構文と導入済みmarimo拡張機能0.18.1の設定名を照合しました。
 - Task 5：操作ガイドを更新し、ローカルリンク25件・旧起動コマンドへの参照解消・差分の空白検査を確認しました。
 - Task 6：以下の自動検証はPassedです。画面での受入確認はNot runで、Task全体は未完了です。
-- Task 7：Task 6完了前のため、旧起動ファイルの削除は保留しています。
+- Task 7：当時は削除を保留。今回のファイル整理Task 6で旧起動ファイルを削除しました。
 - 今回の固定環境復元：カタログSHA-256一致、CPython 3.14.7、uv 0.11.7、83パッケージ解決・80パッケージ同期。
 - GUI操作用ツールは利用できません。画面・ログイン状態の確認は利用者による結果を待ちます。
 - 元ファイルの退避：`.cache/same-window-backup-20260927/`。ファイル別SHA-256は同フォルダの`manifest.json`にあります。
@@ -205,6 +271,6 @@ uv run --locked --group notebook python examples/test_basic_usage.py
 - 2026-09-26の環境準備と、2026-09-27の文章整理時の記録は、退避したREADMEに保全しています。
 - 以前の成功記録を、今回の変更後に再実行した結果として扱いません。
 - 以前の記録でも、VS Code画面の入力・保存・再読込・カーネル操作は未実施でした。
-- 書籍16本の移植・全実行、EXE・GPU検証は今回も対象外です。
+- この以前の作業では、書籍Notebookの移植・全実行とEXE・GPU検証は対象外でした。
 
 </details>

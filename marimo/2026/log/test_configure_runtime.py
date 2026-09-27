@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: Notebook専用の登録器の所有判定・復旧・起動設定を検証する。
 # - 役割: 他者ファイルの保全と設定の再現性を、使い捨てデータで確認する。
-# - 使用: call env.cmd後、uv run --locked --group notebook python test_configure_runtime.py。
+# - 使用: call env.cmd後、uv run --locked --group notebook python log/test_configure_runtime.py。
 # - 制約: 実環境は登録済み。変更する試験データは.cache内だけ。
 # - 非対応: VS Code画面操作、ログイン状態、EXE配布、他のPython環境。
 import contextlib

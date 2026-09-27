@@ -1,0 +1,23 @@
+- 作成日：2026-09-27。
+- 目的：15本の教材で使用する入力を固定し、Notebookの実行中に取得しない。
+- 原本：`sources.json`に固定コミットのURLとSHA-256を記録する。
+- Iris：Seabornの公開教材、150行・4数値列・3種。
+- 回帰：PyMC examplesの`test_scores.csv`。欠損を含む原データを保持する。
+- IRT：書籍Notebookと同じ公開サンプル、1,000人・50問の二値回答。
+- 出典・配布条件は各取得元を参照する。再配布条件を新たに付与するものではない。
+- 通常は同梱CSVを使い、Notebookの読込時にハッシュを検証する。
+- 再取得：CSVが不足した場合だけ、プロジェクトの設定済みCommand Promptで次を実行する。
+
+```cmd
+cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd
+uv run --locked --group notebook python log/prepare_data.py --download
+```
+
+- 取得済みの場合はハッシュを確認し、上書きしない。
+- 検査だけの場合は`--download`を省略する。
+- 通信は各ファイル30秒、応答サイズは2MB以下に制限する。
+- 取得失敗時は原因を解消して同じコマンドを実行する。既存ファイルは保持される。
+- ハッシュ不一致時はファイルを保存したまま原因を確認する。自動削除・更新はしない。
+- CSVは取得バイト列を保持する。改行・数値を手編集しない。
+- 取得実績：2026-09-27、移動前のprepare_data.pyで実施、CPython 3.14.7／uv 0.11.7。

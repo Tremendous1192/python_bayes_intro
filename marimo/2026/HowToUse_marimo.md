@@ -3,7 +3,7 @@
 - VS Codeの公式marimo拡張機能で、Notebookを作成・編集・実行・保存します。
 - 作成日：2026-09-26。文章・参照先の更新日：2026-09-27。
 - 対象：Windows 11 AMD64、CPython 3.14.7、marimo 0.25.0、拡張機能`marimo-team.vscode-marimo` 0.18.1。
-- 初回準備は[uv利用手順](HowToUse_uv.md)、検証結果は[README](README.md)を参照します。
+- 初回準備は[uv利用手順](HowToUse_uv.md)、検証結果は[検証記録](log/移植検証.md)を参照します。
 
 ## 1. 現在のウィンドウで準備する
 
@@ -156,7 +156,7 @@ mo.stop(not run_calculation.value, mo.md("Click Run calculation."))
 | 入力変更後に更新されない | `Cell changes`、stale、停止中のセル、上流エラーを確認する |
 | ボタンを押す前に計算される | 停止判定が重い処理より前にあるか確認する |
 | パス・保存先が違う | `call env.cmd check`、必要なら再登録してカーネルを再起動する |
-| 元の.ipynbや旧APIで失敗する | 書籍16本は未移植。元ファイルを保全し、移植作業で対応する |
+| 元の.ipynbや旧APIで失敗する | [READMEの対応表](README.md#書籍notebookの移植)から移植済みの.pyを開く。元の.ipynbは変更しない |
 
 ## 10. 同じウィンドウでの受入確認
 

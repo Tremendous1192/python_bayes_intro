@@ -4,7 +4,7 @@
 # - 役割: HowToUse_marimo.mdと実行検証が共有する、学習例の原本。
 # - 使用方法: 現在のVS Codeで開き、env.cmd configureで登録済みのPythonを選ぶ。
 # - 制約: CPython 3.14.7、marimo 0.25.0。外部データは取得しない。
-# - 非対応: 書籍16本の移植、実データの推論、EXE配布。
+# - 非対応: 書籍15本の学習内容、実データの推論、EXE配布。
 import marimo
 
 __generated_with = "0.25.0"

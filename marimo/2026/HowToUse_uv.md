@@ -82,7 +82,7 @@ call env.cmd check
 ```
 
 - `configure`は専用`.venv`に起動時設定を登録し、新規Pythonで反映を確認します。
-- 登録器は[configure_runtime.py](configure_runtime.py)です。標準ライブラリだけを使います。
+- 登録器は[log/configure_runtime.py](log/configure_runtime.py)です。標準ライブラリだけを使います。
 - `check`は現在の`env.cmd`と登録内容の一致を確認します。
 - `--locked`は依存定義とロックの不一致をエラーにします。`--frozen`で回避しません。
 - `--group notebook`はmarimoなどのNotebook用依存を含めます。

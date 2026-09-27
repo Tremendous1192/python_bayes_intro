@@ -110,12 +110,12 @@ if not exist "%BAYES_PROJECT%\.venv\Scripts\python.exe" (
     exit /b 1
 )
 rem - 登録器が欠けた配置では、不完全な初期化を行わない。
-if not exist "%BAYES_PROJECT%\configure_runtime.py" (
-    echo ERROR: configure_runtime.py is missing. Restore the project files.
+if not exist "%BAYES_PROJECT%\log\configure_runtime.py" (
+    echo ERROR: log/configure_runtime.py is missing. Restore the project files.
     exit /b 1
 )
 rem - -Sで古い登録を読まずに修復・解除し、-Iと-Bで外部設定とpycを抑止する。
-"%BAYES_PROJECT%\.venv\Scripts\python.exe" -I -B -S "%BAYES_PROJECT%\configure_runtime.py" %1
+"%BAYES_PROJECT%\.venv\Scripts\python.exe" -I -B -S "%BAYES_PROJECT%\log\configure_runtime.py" %1
 exit /b %errorlevel%
 
 :usage

@@ -27,7 +27,8 @@ RUNTIME_KEYS = (
 # - uvのWindowsランチャーが設定する正当なPYTHONHOMEは検証後に子へ残さない。
 CLEAR_KEYS = ("PYTHONHOME", "VIRTUAL_ENV", "UV_CONFIG_FILE", "UV_INDEX", "UV_INDEX_URL",
               "UV_EXTRA_INDEX_URL", "UV_DEFAULT_INDEX")
-ROOT = Path(__file__).resolve().parent
+# - log配下へ移動しても、環境と生成物の基準はプロジェクト直下に保つ。
+ROOT = Path(__file__).resolve().parents[1]
 VENV = ROOT / ".venv"
 SITE = VENV / "Lib" / "site-packages"
 STATE = ROOT / ".cache" / "runtime-registration.json"
