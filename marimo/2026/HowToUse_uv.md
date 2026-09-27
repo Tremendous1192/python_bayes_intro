@@ -1,14 +1,14 @@
 # uv利用手順
 
-- VS Code・uv・marimoで学習するため、Pythonとライブラリを準備します。
-- 作成日：2026-09-26。文章・参照先の更新日：2026-09-27。
+- VS Codeの現在のウィンドウで、Pythonとライブラリを準備します。
+- 作成日：2026-09-26。更新日：2026-09-27。
 - 対象：Windows 11 AMD64、GIL付きCPython 3.14.7、uv 0.11.7。
 - 初回は第1～4節、準備済みなら第5節から始めます。
 
-## 1. 初回のターミナルを準備する
+## 1. 現在のターミナルを準備する
 
-1. VS Codeの`Terminal: Select Default Profile`で`Command Prompt`を選びます。
-2. 新しい統合ターミナルを開き、次を実行します。
+1. 現在のVS Codeで`Terminal: Select Default Profile`から`Command Prompt`を選びます。
+2. 統合ターミナルで次を実行します。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
@@ -18,24 +18,24 @@ dot -V
 g++ --version
 ```
 
-- `env.cmd`がエラーになった場合は、後続の操作を止めます。
-- uv・Graphviz本体の`dot`・MinGWの`g++`は、導入済みのものを使います。
-- コマンドが見つからない場合は導入先を確認します。Pythonの`graphviz`パッケージには`dot`本体が含まれません。
-- `env.cmd`は作業フォルダ・保存先・実行系・並列数を設定します。環境やライブラリの導入は、利用者がuvで行います。
+- 各コマンドの成功を確認してから次へ進みます。
+- uv・Graphviz本体の`dot`・MinGWの`g++`は導入済みのものを使います。
+- `env.cmd`は保存先などを設定します。Python・ライブラリを自動導入しません。
+- ターミナルの`USERPROFILE`・`APPDATA`・`LOCALAPPDATA`を変更しません。
+- 旧手順を実行済みのターミナルは閉じ、同じウィンドウで新しいCommand Promptを開いて移行します。
+- VS Codeの既存ログイン・ユーザー設定・拡張機能を使います。
+- このターミナルを閉じると、ターミナルへ適用した環境変数は終了します。
 
 | 保存先・設定 | 役割 |
 | --- | --- |
-| `.venv/` | このプロジェクトのPython環境 |
+| `.venv/` | プロジェクト専用のPython環境 |
 | `.cache/python/` | 固定したPython本体 |
 | `.cache/uv/` | uvの取得キャッシュ |
-| `.cache/tmp/`、`.cache/profile/` | 一時ファイル、プロセス内の個人領域参照 |
-| `.cache/`内の各専用ディレクトリ | 描画・JIT・marimoなどの設定とキャッシュ |
+| `.cache/tmp/` | 一時ファイル |
+| `.cache/profile/` | 登録済みPythonプロセス内だけで使う個人領域参照 |
+| `.cache/`内の各専用ディレクトリ | 描画・JIT・marimoなどのキャッシュ |
 | `UV_PYTHON_DOWNLOADS=never` | 通常操作でのPython自動取得を禁止 |
 | 数値計算の各スレッド上限：2 | CPU・メモリの過剰利用を抑制 |
-
-- 設定は呼出元ターミナルと子プロセスに有効です。Windows全体のPATH・レジストリ・通常のVS Code設定は変更しません。
-- `USERPROFILE`・`APPDATA`などもプロジェクト内へ切り替わるため、このターミナルは学習用として使います。
-- 設定を終えるときはターミナルを閉じます。
 
 ## 2. Pythonを導入する（初回のみ）
 
@@ -69,125 +69,118 @@ set "UV_PYTHON_DOWNLOADS=never"
 - 配布物のSHA-256：`1493fc4185edf84bbd4305c15c5fbac2d4fcd4ddd7eb6273903669a5d3106178`。
 - uvが配布物をカタログのハッシュと照合します。Python 3.14.7が確認できたら第3節へ進みます。
 
-## 3. ライブラリを揃える（初回・復元時）
+## 3. ライブラリとNotebookの設定を揃える
 
-1. 同じターミナルで、ロック確認・同期・Python確認を順に実行します。
-2. 各コマンドの成功を確認してから次へ進みます。
+1. 同じターミナルで次を順に実行します。
+2. 失敗した場合は次へ進まず、表示された案内を確認します。
 
 ```cmd
 uv lock --check
 uv sync --locked --group notebook
-uv run --locked --group notebook python -c "import sys; print(sys.executable); print(sys.version); assert sys.version_info[:3] == (3, 14, 7); assert sys._is_gil_enabled()"
+call env.cmd configure
+call env.cmd check
 ```
 
-- 実行ファイルが次の場所で、Python 3.14.7・GIL有効であることを確認します。
+- `configure`は専用`.venv`に起動時設定を登録し、新規Pythonで反映を確認します。
+- 登録器は[configure_runtime.py](configure_runtime.py)です。標準ライブラリだけを使います。
+- `check`は現在の`env.cmd`と登録内容の一致を確認します。
+- `--locked`は依存定義とロックの不一致をエラーにします。`--frozen`で回避しません。
+- `--group notebook`はmarimoなどのNotebook用依存を含めます。
+- 初回・`.venv`再作成後・`env.cmd`変更後は`configure`を実行します。
+- 設定変更・解除の前に、この`.venv`を使うNotebookカーネルを停止します。
+- 設定値の原本は`env.cmd`です。生成物は手編集しません。
+
+## 4. 同じウィンドウでNotebookを準備する
+
+1. 対象の`2026`フォルダがワークスペースのルートとして表示されていることを確認します。
+   - 親の`C:\dev`などを開いている場合は、`File: Add Folder to Workspace`で`C:\dev\python_bayes_intro\marimo\2026`を現在のウィンドウへ追加します。
+   - 子フォルダの`.vscode/settings.json`は、親だけを開いた状態では自動適用されません。
+   - ワークスペースを保存する場合は`C:\dev\`内へ保存し、既存ファイルを上書きしません。
+2. 現在のウィンドウで公式拡張機能`marimo-team.vscode-marimo`とMicrosoft Pythonの有効化を確認します。
+   - 確認対象のmarimo拡張機能は0.18.1です。更新・追加導入は自動実行しません。
+   - フォルダの信頼確認が出た場合は、自分の学習用フォルダとして確認します。
+3. marimoの言語サーバーは既定の`wasm`を使います。
+   - 以前に別設定へ変更していた場合は、ウィンドウの設定で`marimo.lsp.server`を確認します。
+4. [marimo利用手順](HowToUse_marimo.md)に従い、Notebookのカーネルに次を選びます。
 
 ```text
 C:\dev\python_bayes_intro\marimo\2026\.venv\Scripts\python.exe
 ```
 
-- `env.cmd`がPythonと仮想環境の保存先を固定するため、毎回の長いパス指定は不要です。
-- `--locked`は依存定義とロックの不一致をエラーにします。`--frozen`で回避しません。
-- `--group notebook`はmarimoなどのNotebook用依存を含める指定です。
-
-## 4. 学習用のVS Codeを開く（初回設定）
-
-1. 次のコマンドで専用ウィンドウを開きます。
-
-```cmd
-open_vscode.cmd
-```
-
-2. 開いたフォルダが`C:\dev\python_bayes_intro\marimo\2026`であることを確認します。
-3. VS Codeの確認画面で、自分の学習用フォルダとして信頼するかを選びます。
-   - 制限モードでは拡張機能によるNotebook実行を完了できません。
-4. 専用ウィンドウの拡張機能一覧で、公式の`marimo-team.vscode-marimo`を確認します。
-   - 確認対象は0.18.1です。未導入なら導入し、必要に応じて`Install Specific Version...`で版を選びます。
-   - 依存するMicrosoft Python拡張機能も必要です。
-   - 通常ウィンドウに導入済みでも、専用の保存先には存在しない場合があります。
-5. [marimo利用手順](HowToUse_marimo.md)でNotebookのPythonを選びます。
-   - 採用した拡張機能の版・画面操作の検証結果は[README](README.md)に記録します。
-
-<details>
-<summary>専用ウィンドウの理由と保存先</summary>
-
-- VS Codeは起動済みプロセスの環境変数を再利用する場合があります。
-- 通常ウィンドウの統合ターミナルで`set`しても、拡張機能側には遡って反映されません。
-- `open_vscode.cmd`は`env.cmd`を呼び、`--user-data-dir`・`--extensions-dir`を指定します。
-- 拡張機能の子プロセスにも、同じ保存先・実行系の設定を継承させます。
-
-| 保存先 | 内容 |
-| --- | --- |
-| `.cache/vscode-user/` | 専用ウィンドウの設定・履歴・ログ |
-| `.cache/vscode-extensions/` | 専用ウィンドウの拡張機能 |
-| `.vscode/settings.json` | 共有するプロジェクト設定 |
-
-- 専用ユーザー設定は初回だけ生成し、以後は上書きしません。信頼設定・認証情報はコピーしません。
-- 初期設定ではVS Code本体・拡張機能の自動更新を止めます。更新時は版を記録し、作成・実行・再開を確認します。
-- `env.cmd`を変更した場合は処理と保存を終え、専用ウィンドウをすべて閉じてから起動し直します。
-
-</details>
+- 別ウィンドウ・専用ユーザーデータ領域の作成は不要です。
+- ターミナルの`set`を拡張機能へ遡って反映する方式ではありません。
+- 選択したPythonが起動フックを読み、Notebook用の設定を適用します。
+- `PYTHONUTF8`は起動済みPythonのモードを変更しません。拡張機能の中継プロセスから起動される子カーネルへの継承を確認しています。
+- `-S`は登録器の修復用です。Notebook実行には使いません。
+- `PYTHONHOME`・`PYTHONPATH`で別Pythonを指定したウィンドウは対象外です。uv自身の正当な`PYTHONHOME`は検証して許可します。
+- `env.cmd`変更後は再登録し、Notebookカーネルを起動し直します。
+- 設定・環境の候補が更新されない場合だけ、保存後に同じウィンドウで`Developer: Reload Window`を使います。
 
 ## 5. 毎日の操作
 
-1. VS CodeのCommand Promptで次を実行します。
+1. uvや検査コマンドを使うターミナルで次を実行します。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
-open_vscode.cmd
+call env.cmd
+call env.cmd check
 ```
 
-2. 開いた専用ウィンドウでNotebookを編集します。
-   - 毎回の同期・再インストールは不要です。
-   - 統合ターミナルにも保存先設定が継承され、次の確認を実行できます。
+2. 同じウィンドウでNotebookを開き、登録済み`.venv`のカーネルを使います。
 
-```cmd
-uv lock --check
-uv run --locked --group notebook marimo --version
-```
-
-- 通常ウィンドウでuvだけを操作する場合は、第1節と同じ場所で`call env.cmd`を実行します。
-- この操作だけでは、通常ウィンドウの拡張機能側の設定は変わりません。
+- 毎回の同期・再インストール・再登録は不要です。
+- 登録後のNotebook実行は、ターミナルで`env.cmd`を呼んだかどうかに依存しません。
+- Pythonの実体・版はNotebookの確認セルでも確認します。
+- VS Code本体と拡張機能の更新はPythonのロックとは別管理です。
 
 ## 6. 依存を変更する
 
-1. 2026-09-26 JST以前の安定版から、Windows AMD64・Python 3.14への対応を確認します。
+1. 2026-09-26 JST以前の安定版から、Windows AMD64・Python 3.14対応を確認します。
 2. `pyproject.toml`を変更し、採用版・調整理由をREADMEに記録します。
-3. 専用ウィンドウの統合ターミナルで次を順に実行します。
+3. カーネルを停止してから、設定済みターミナルで次を順に実行します。
 
 ```cmd
 uv lock
 uv lock --check
 uv sync --locked --group notebook
+call env.cmd configure
 ```
 
 4. 新しいNotebookセッションで、影響する計算・描画を確認します。
 
 - `uv.lock`はuvが生成します。手編集・`pip install`・セルからの導入は使いません。
-- `exclude-newer`は2026-09-26 JSTの終了境界までの配布物に制限します。
 - Pythonの版や基準日を変える場合は、要件・固定値・ガイド・実行確認を一緒に見直します。
 
 ## 7. 困ったとき・復元する
 
 | 症状 | 対処 |
 | --- | --- |
-| `env.cmd`の配置エラー | 指定フォルダに配置する。コピー先での使用は対象外 |
-| Python本体が見つからない | 第1・2節を確認。別のPythonへ自動的に切り替えない |
-| `.venv`未作成、版やmarimoが違う | 第3節の同期と実行ファイル確認を行う |
-| Pythonの取得が禁止される | 明示的な導入時だけ`manual`、終了後は`never` |
-| `code.cmd`が見つからない | Windows版VS CodeのCLI導入先を確認する |
-| 拡張機能がない・制限モードになる | 第4節の専用ウィンドウ、拡張機能、フォルダの信頼を確認する |
-| ロック不一致 | 意図した変更を確認してから第6節へ進む |
-| Graphviz・PyTensorのエラー | 同じターミナルで`dot -V`、`g++ --version`を確認する |
+| 環境未作成・Python本体がない | 第1～3節を実行。別のPythonへ切り替えない |
+| 設定が未登録・古い | カーネル停止後に`call env.cmd configure` |
+| 登録ファイルが変更されている | 手編集を保全し、`.cache/runtime-registration.json`と退避内容を確認する |
+| 登録操作のロックが残る | 他の設定操作が実行中でないか確認。存在だけを理由に削除しない |
+| カーネルが起動時に失敗する | `call env.cmd check`で確認。登録器は`-S`で起動するためフック破損時も調査可能 |
+| 保存先が期待と異なる | 選択したPython・設定の再登録・カーネル再起動を確認 |
+| ロック不一致 | 意図した依存変更を確認して第6節へ進む |
+| Graphviz・PyTensorのエラー | `dot -V`、`g++ --version`を確認 |
 
-- **`.cache/python/`には実行に必要なPython本体があります。`.cache`全体を削除しないでください。**
-- Notebookを保全し、環境だけの復元は第1～3節に従います。
+- 登録解除が必要な場合だけ、カーネルを停止して次を実行します。
+
+```cmd
+cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd unconfigure
+```
+
+- 自分の生成物だけを検査・退避して解除します。他者のファイルや変更済みファイルは削除しません。
+- 解除時の退避先：`.cache/runtime-before-unconfigure/`。既存の異なる退避は上書きしません。
+- 再登録は`call env.cmd configure`です。解除中はNotebookを実行しません。
+- **`.cache/python/`にはPython本体があります。`.cache`全体を削除しないでください。**
+- 環境だけを復元する場合は第1～3節に従います。Notebookと退避内容を保全します。
 
 ## 参考資料
 
-- [Python 3.14.7公式リリース](https://www.python.org/downloads/release/python-3147/)
+- [Python 3.14の起動時設定](https://docs.python.org/3.14/library/site.html)
 - [uvのPython導入](https://docs.astral.sh/uv/guides/install-python/)
 - [uvのロックと同期](https://docs.astral.sh/uv/concepts/projects/sync/)
-- [uvの公開日時制限](https://docs.astral.sh/uv/concepts/resolution/#reproducible-resolutions)
-- [VS Codeの環境変数継承](https://code.visualstudio.com/docs/terminal/advanced#_environment-variables-between-vscode-instances)
+- [VS Codeの複数フォルダと設定](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces)
 - [公式marimo拡張機能](https://marketplace.visualstudio.com/items?itemName=marimo-team.vscode-marimo)

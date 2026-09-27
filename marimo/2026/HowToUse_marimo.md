@@ -5,18 +5,16 @@
 - 対象：Windows 11 AMD64、CPython 3.14.7、marimo 0.25.0、拡張機能`marimo-team.vscode-marimo` 0.18.1。
 - 初回準備は[uv利用手順](HowToUse_uv.md)、検証結果は[README](README.md)を参照します。
 
-## 1. 専用ウィンドウを開く
+## 1. 現在のウィンドウで準備する
 
-1. VS CodeのCommand Promptで次を実行します。
+1. [uv利用手順](HowToUse_uv.md)の第1～4節で、環境同期と`call env.cmd configure`を済ませます。
+2. 既存のVS Codeウィンドウをそのまま使います。
+   - 親フォルダを開いている場合は、対象の`2026`フォルダを同じワークスペースへ追加します。
+   - 初回の拡張機能・フォルダの信頼・設定範囲は、uv利用手順の第4節に従います。
+3. 起動済みのNotebookカーネルがあれば停止し、登録後のPythonで起動し直します。
 
-```cmd
-cd /d C:\dev\python_bayes_intro\marimo\2026
-open_vscode.cmd
-```
-
-2. 開いた専用ウィンドウを使います。
-   - 初回の拡張機能・フォルダの信頼確認は、uv利用手順の第4節に従います。
-   - この起動方法で、NotebookのPythonにもキャッシュ保存先・スレッド上限を継承させます。
+- 保存先・並列数は専用`.venv`の起動フックから設定します。
+- VS Codeの別ウィンドウや専用ユーザーデータ領域を作成しません。
 
 ## 2. 用意されたNotebookを開く
 
@@ -103,10 +101,12 @@ mo.md(f"Mean: **{mean_value:.1f}**")
 
 ## 6. 検査と再現確認
 
-1. 専用ウィンドウの統合ターミナルで、静的検査と数値確認を実行します。
+1. 現在のウィンドウの設定済み統合ターミナルで、静的検査と数値確認を実行します。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd
+call env.cmd check
 uv run --locked --group notebook marimo check examples/basic_usage.py
 uv run --locked --group notebook python examples/test_basic_usage.py
 ```
@@ -138,8 +138,8 @@ mo.stop(not run_calculation.value, mo.md("Click Run calculation."))
 
 1. 実行中の処理を停止し、`Ctrl+S`で保存します。
 2. アクティブなNotebookで`marimo: Shut Down Kernel`を実行します。
-3. 作業を終える場合は専用ウィンドウを閉じます。
-4. 再開時は`open_vscode.cmd`から開き、第2節のPython・第3節の出力を確認します。
+3. 作業を終える場合は、必要に応じてターミナルやNotebookを閉じます。
+4. 再開時も現在のウィンドウを使い、第2節のPython・第3節の出力を確認します。
 
 - セッション初期化には`marimo: Restart notebook kernel`を使い、必要なセルを最初から実行します。
 - 拡張機能が管理するカーネルは、統合ターミナルの`Ctrl+C`で停止する手順にしません。
@@ -150,13 +150,31 @@ mo.stop(not run_calculation.value, mo.md("Click Run calculation."))
 | 症状 | 対処 |
 | --- | --- |
 | 通常のPythonコードとして開く | `marimo: Open as marimo notebook`を実行する |
-| 拡張機能が動かない | 専用ウィンドウの拡張機能、フォルダの信頼、`marimo: Show diagnostics`を確認する |
+| 拡張機能が動かない | 現在のウィンドウの拡張機能、フォルダの信頼、`marimo: Show diagnostics`を確認する |
 | 違うPythonが動く | Notebook側のカーネル選択・`sys.executable`を確認する |
 | 依存が不足する | uv利用手順で`uv sync --locked --group notebook`を実行する |
 | 入力変更後に更新されない | `Cell changes`、stale、停止中のセル、上流エラーを確認する |
 | ボタンを押す前に計算される | 停止判定が重い処理より前にあるか確認する |
-| パス・保存先が違う | 専用ウィンドウを閉じ、`open_vscode.cmd`から開き直す |
+| パス・保存先が違う | `call env.cmd check`、必要なら再登録してカーネルを再起動する |
 | 元の.ipynbや旧APIで失敗する | 書籍16本は未移植。元ファイルを保全し、移植作業で対応する |
+
+## 10. 同じウィンドウでの受入確認
+
+1. 既存ウィンドウのCommand Promptで次を実行します。
+
+```cmd
+cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd
+call env.cmd check
+```
+
+2. 第2・3節でカーネル選択、スライダー10→20、平均5.5→10.5、ボタン押下を確認します。
+3. `Ctrl+S`で保存し、Notebookを閉じて同じウィンドウで開き直します。
+4. 第8節でカーネル停止・再起動を行い、初期状態から再実行します。
+5. この操作を理由とする追加ログイン要求がなく、既存ウィンドウ・既存アカウントを維持できたことを確認します。
+
+- 画面確認は自動テストと区別し、実施日・結果・失敗した操作をREADMEへ記録します。
+- 起動スクリプト廃止の最終判定には、この画面確認も必要です。
 
 ## 参考資料
 

@@ -1,9 +1,12 @@
 {
     // 作成日: 2026-09-26
     // 目的・役割: このフォルダの編集環境を、uv管理のNotebook実行に揃える。
-    // 使用方法: open_vscode.cmdから開き、Notebook側でも同じPythonを選択する。
+    // 更新日: 2026-09-27。既存ウィンドウで設定済み.venvを使用する。
+    // 使用方法: env.cmd configureの後、Notebook側でも同じPythonを選択する。
+    // 適用範囲: 2026をワークスペースのフォルダとして開くか、現在のウィンドウへ追加する。
     // 制約: marimo拡張機能0.18.1、Windowsの固定配置。依存変更はuvで行う。
-    // 非対応: sandbox環境、セルからの依存追加、他プロジェクトへの設定適用。
+    // 非対応: sandbox環境、セルからの依存追加、認証設定の移行。
+    // 複数フォルダでは既存ウィンドウの設定からCommand Promptを選択する。
     "terminal.integrated.defaultProfile.windows": "Command Prompt",
     "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
     // uvが実行系を選ぶため、ターミナルの暗黙のactivateは使わない。

@@ -1,29 +1,33 @@
 # ベイズ推論「超」入門 — marimo環境（2026）
 
 - 書籍『Pythonでスラスラわかる ベイズ推論「超」入門』を、VS Code・uv・marimoで学ぶための環境です。
-- 環境定義・起動コマンド・操作ガイド・基本操作のNotebookを用意しています。
+- 現在のVS Codeウィンドウとログイン状態を使い、プロジェクト専用のPythonで実行します。
 - 書籍の本編11本・参考5本の移植は後続作業です。
-- 作成日：2026-09-26。文章・参照先の更新日：2026-09-27。
+- 作成日：2026-09-26。更新日：2026-09-27。
 
 ## まずはここから
 
 | 状況 | 操作 |
 | --- | --- |
 | 初めて準備する | [uv利用手順](HowToUse_uv.md)の第1～4節 |
-| 準備済みで学習を始める | 下のコマンドで専用VS Codeを開く |
+| 準備済みで学習を始める | 同じウィンドウでNotebookを開き、登録済み.venvを選ぶ |
 | Notebookの編集・実行を試す | [marimo利用手順](HowToUse_marimo.md) |
-| 計算結果を再確認する | このREADMEの「検証」 |
+| 設定を変更した・.venvを再作成した | カーネル停止後に`call env.cmd configure` |
+| 登録内容を確認する | 設定済みターミナルで`call env.cmd check` |
 
-- VS Codeの統合ターミナルで`Command Prompt`を選び、次を実行します。
+- uvや検査を使う場合は、現在のウィンドウのCommand Promptで次を実行します。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
-open_vscode.cmd
+call env.cmd
+call env.cmd check
 ```
 
-- 初回は専用ウィンドウの拡張機能・フォルダの信頼を確認します。
+- 初回の依存同期後は、先に`call env.cmd configure`で登録します。
 - Notebookのカーネルには`.venv\Scripts\python.exe`を選びます。
-- 日常の起動時に、依存の同期や長い環境変数設定をやり直す必要はありません。
+- 親フォルダを開いている場合は、対象の`2026`を現在のワークスペースに追加します。
+- 詳しい設定範囲・カーネル選択はuv利用手順の第4節を参照します。
+- 毎回の依存同期・再登録・別ウィンドウ起動は不要です。
 
 ## フォルダの中身
 
@@ -34,22 +38,45 @@ open_vscode.cmd
 | [pyproject.toml](pyproject.toml) | Pythonの対応範囲と直接依存の原本 |
 | [.python-version](.python-version) | 使用するPythonのパッチ版 |
 | [uv.lock](uv.lock) | uvが生成した依存・配布物の固定情報 |
-| [env.cmd](env.cmd) | 保存先・実行系・並列数の共通設定 |
-| [open_vscode.cmd](open_vscode.cmd) | 設定を継承した専用VS Codeの起動 |
-| [.vscode/settings.json](.vscode/settings.json) | Command Prompt・Python候補・marimoの共有設定 |
+| [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除の入口 |
+| [configure_runtime.py](configure_runtime.py) | 専用.venvへの起動設定の生成・確認・解除 |
+| [test_configure_runtime.py](test_configure_runtime.py) | 所有判定・繰返し・解除・新規プロセスの検証 |
+| [.vscode/settings.json](.vscode/settings.json) | Python候補・marimoの共有設定 |
 | [examples/basic_usage.py](examples/basic_usage.py) | 平均・表・図・ボタンの8セルの例 |
 | [examples/test_basic_usage.py](examples/test_basic_usage.py) | 例を新規プロセスで検証するNotebook専用コード |
 | [HowToUse_uv.md](HowToUse_uv.md) | 初回導入・日常操作・更新・復元 |
-| [HowToUse_marimo.md](HowToUse_marimo.md) | 拡張機能での作成・編集・実行・保存 |
+| [HowToUse_marimo.md](HowToUse_marimo.md) | 拡張機能での作成・編集・実行・保存・画面確認 |
 | [uv_要件.md](要件/uv_要件.md) / [marimo_要件.md](要件/marimo_要件.md) | 環境とガイドの要件 |
-| `.venv/` | プロジェクト専用のPython環境 |
-| `.cache/` | Python本体・各種キャッシュ・専用VS Codeの状態・検証用ファイル |
+| `.venv/` | プロジェクト専用のPython環境と生成された起動フック |
+| `.cache/` | Python本体・キャッシュ・登録記録・復元用の退避 |
 
 - `.venv/`・`.cache/`は[既存の.gitignore](../.gitignore)でGit管理から除外しています。
-- **`.cache/python/`は実行に必要なPython本体です。`.cache`全体を削除・移動しないでください。**
-- `env.cmd`の設定はターミナルと子プロセスに有効です。
-- `open_vscode.cmd`は専用のユーザー設定・拡張機能保存先を使い、初回生成した設定は上書きしません。
-- 保存先・設定変更後の再起動方法は、uv利用手順の第4節にあります。
+- **`.cache/python/`はPython本体です。`.cache`全体を削除・移動しないでください。**
+- VS Codeのユーザー設定・認証情報・拡張機能のコピーは行いません。
+
+## 設定が届く仕組み
+
+- ターミナル：`call env.cmd`が、呼出元と子プロセスにuv用の設定を適用します。
+- Notebook：選択した専用`.venv`が、Python起動時に登録済み設定を読みます。
+- `configure_runtime.py`は、親のVS Codeへ環境変数を遡って書き込むための処理ではありません。
+- 補助コードの追加理由は、拡張機能から起動されるPythonに影響範囲を限定するためです。
+- Notebook専用Pythonでは、個人領域参照もプロジェクト内へ切り替えます。
+- ターミナルとVS Code本体の個人領域・ログイン状態は切り替えません。
+- この.venvの全Python起動に設定が適用されます。他用途の環境と共用しません。
+- 起動後の設定だけではUTF-8モードを変更できません。中継プロセスから子カーネルへの継承を検証します。
+- `-S`は起動フックを無効にするため、修復用の登録器にだけ使用します。
+
+| 生成物 | 原本・生成方法 |
+| --- | --- |
+| `.venv/Lib/site-packages/_bayes_runtime.py` | `configure_runtime.py`と`env.cmd`から生成する設定適用コード |
+| `.venv/Lib/site-packages/000_bayes_runtime.pth` | 同じ登録器から生成する読込入口 |
+| `.cache/runtime-registration.json` | 生成物2本の所有確認用SHA-256 |
+
+- 生成コマンド：`call env.cmd configure`。実行系：CPython 3.14.7。
+- 生成物は手編集しません。同名の他者ファイル・変更済み生成物は上書きしません。
+- 更新前の生成物は`.cache/`へハッシュ付きの名前で退避します。
+- 設定変更・解除前にカーネルを停止します。複数ファイル全体の原子性は保証しません。
+- 解除・再登録・破損時の扱いはuv利用手順の第7節を参照します。
 
 ## 採用環境
 
@@ -125,72 +152,59 @@ open_vscode.cmd
 
 ## 検証
 
-- 再実行は、環境を準備した専用VS Codeの統合ターミナルで行います。
+- 同じウィンドウのCommand Promptで、各コマンドの成功を確認してから次へ進みます。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo\2026
+call env.cmd
+call env.cmd check
 uv lock --check
+uv run --locked --group notebook python test_configure_runtime.py
 uv run --locked --group notebook marimo check examples/basic_usage.py
 uv run --locked --group notebook python examples/test_basic_usage.py
 ```
 
-- 通常ウィンドウでは、先に`call env.cmd`を実行します。
-- 検証コードはGit管理対象の`examples/`を原本とし、以前のキャッシュ内の検証器には依存しません。
-- 3ケースは初期値10・変更後20・変更後のボタン押下相当です。`app.run(defs=...)`による模擬で、画面操作ではありません。
-- 画面ではmarimo利用手順の第2・3・8節に従い、入力・保存・再読込・カーネル停止と再起動を確認します。
+- 登録器の試験は`.cache/`の使い捨てデータで、他者ファイル・利用者の編集・操作ロックを保全することを確認します。
+- 新規プロセス試験は、ターミナルの管理対象設定を外してから、起動フックによる適用を確認します。
+- Notebookの3ケースは初期値10・変更後20・変更後のボタン押下相当です。
+- `app.run(defs=...)`による模擬であり、画面操作ではありません。
+- 画面確認はmarimo利用手順の第10節で行い、自動検証と区別します。
 
-### 文章要件反映の検証（2026-09-27）
+### 既存ウィンドウ対応（2026-09-27）
 
-- Task 1～4は順番に実施し、統合していません。
-- 対象はガイド3本・設定とコード5本・親の.gitignoreです。要件書のユーザー変更は保持しています。
+- Task 1～7は順番に扱い、統合していません。
+- Task 1：使い捨て仮想環境で起動フック、子へのUTF-8継承、一時保存先、親環境の保持を確認しました。
+- Task 2：ターミナル設定、引数エラー、登録器未配置時の案内を確認しました。
+- Task 3：登録、所有競合、繰返し、操作ロック、解除・復元、新規プロセス、uv同期後の登録保持を確認しました。
+- Task 4：プロジェクト設定の構文と導入済みmarimo拡張機能0.18.1の設定名を照合しました。
+- Task 5：操作ガイドを更新し、ローカルリンク25件・旧起動コマンドへの参照解消・差分の空白検査を確認しました。
+- Task 6：以下の自動検証はPassedです。画面での受入確認はNot runで、Task全体は未完了です。
+- Task 7：Task 6完了前のため、旧起動ファイルの削除は保留しています。
+- 今回の固定環境復元：カタログSHA-256一致、CPython 3.14.7、uv 0.11.7、83パッケージ解決・80パッケージ同期。
+- GUI操作用ツールは利用できません。画面・ログイン状態の確認は利用者による結果を待ちます。
+- 元ファイルの退避：`.cache/same-window-backup-20260927/`。ファイル別SHA-256は同フォルダの`manifest.json`にあります。
+- 既存の採用版・依存ロック・要件書は維持しています。全ライブラリの最新性は再調査していません。
 
-| 判定 | Task | 今回の結果 |
-| --- | --- | --- |
-| Passed | 1 | 旧参照を修正。ガイド内のローカルリンク23件の参照先を確認 |
-| Passed | 2 | 説明を箇条書き化。掲載したcmdコマンドの実行部分を保持 |
-| Passed | 3 | Pythonの説明を除く構文木、TOML設定値、バッチ命令を照合。案内先以外の実行内容を保持 |
-| Passed | 4 | カタログのSHA-256照合、CPython 3.14.7の復元、uv 0.11.7でのロック確認・80パッケージ同期 |
-| Passed | 4 | .venvの実行ファイル、AMD64・GIL有効、直接依存15件の導入版と保存先設定を確認 |
-| Passed | 4 | marimo静的検査、別々の新規プロセスによる3ケースの平均・表・図・停止条件 |
-| Passed | 4 | 環境未準備時の正しい案内と終了コード1、準備後のVS Code起動コマンドの終了コード0 |
-| Passed | 4 | UTF-8・CRLF、コード行数、最終差分、Python固定値・ロック・共有VS Code設定の保持 |
-| Not run | 4 | VS Code画面での入力・保存・再読込・カーネル停止と再起動 |
-| Not run | 4 | 全依存の基準日時点の最新性と、全15件のimportの再検証 |
-| Not applicable | — | 書籍16本の移植・EXE・GPU検証 |
+| 判定 | Task 6の確認項目 |
+| --- | --- |
+| Passed | 固定CPython 3.14.7、AMD64・64 bit・GIL、実際の.venv実行ファイル |
+| Passed | 登録内容とenv.cmdの一致、新規Pythonへの設定適用 |
+| Passed | 他者ファイル・利用者編集・操作ロックの保全、登録の繰返し |
+| Passed | 解除・復元、.venv再作成相当、部分破損・不正な所有記録の拒否 |
+| Passed | 未作成環境・引数違い・別Pythonの拒否、暗黙の導入がないこと |
+| Passed | marimo静的検査、初期値・入力変更・ボタン押下相当の3ケース |
+| Not run | VS Code画面での入力・保存・再読込・停止・再起動と、追加ログイン要求がないこと |
 
-- Pythonと依存はuv利用手順の固定カタログ・ロックから復元しました。新しい版への更新は行っていません。
-- 作成した環境・取得物・専用VS Codeの状態は、Git管理外の`.venv/`・`.cache/`に保存しています。
-- 編集中のLF改行で`env.cmd`が一度失敗したため、元のCRLFへ戻し、正常終了と保存先設定を再確認しました。
-- VS Code起動の終了コード0は、拡張機能や画面操作の成功を示すものではありません。
-- GUI操作用ツールがないため、画面検証は未実施です。専用ウィンドウで拡張機能を準備し、marimo利用手順の第2・3・8節で確認します。
-- 現在のコード行数：`pyproject.toml` 63、`env.cmd` 91、`open_vscode.cmd` 74、`basic_usage.py` 148、`test_basic_usage.py` 79。
-- いずれも300行以下です。文書・コメントの検査用Python 3.13.13と、Notebook実行用の3.14.7は区別しています。
+- .venv再作成後に旧登録記録だけが残るケースは、Task 6で修正し回帰確認しました。
+- 外部環境の継承試験では、実際のターミナルやVS Codeの環境変数は変更していません。
+- 試験の保存先確認は設定値と既知の一時出力を対象とし、OS全体の書込監視を実施したものではありません。
 
 <details>
-<summary>環境準備時の検証記録（既存文書の記録日：2026-09-26）</summary>
+<summary>以前の検証記録の扱い</summary>
 
-- 以下は変更前READMEに記載された結果です。2026-09-27の再実行結果ではありません。
-- 旧Task番号は当時の作業単位を表します。
-
-| 判定 | 旧Task | 内容 |
-| --- | --- | --- |
-| Passed | 1 | 基準日と15直接依存の照合、ロック確認、80パッケージの同期、全直接依存のimport |
-| Passed | 1 | .venvの実行ファイル、CPython 3.14.7、AMD64、GIL有効を確認 |
-| Passed | 2-A | 起動引数、保存先・スレッド設定の子プロセスへの継承、再起動時の既存設定保持 |
-| Passed | 2-A | VS Code CLI未検出時の停止、子コマンドの失敗コード伝搬 |
-| Not run | 2-B | 拡張機能のカーネル実行。専用プロファイルでフォルダの信頼確認が必要 |
-| Passed | 3 | 掲載した準備・同期・版確認コマンド、文書内のローカルリンク |
-| Passed | 4 | marimo静的検査、新規プロセス3ケースの平均・表・図・ボタン停止条件 |
-| Passed | 4 | 保存した図の目視確認。軸・凡例は英語、平均線は5.5 |
-| Not run | 4 | VS Code画面での入力操作、保存・再読込、カーネル停止・再起動 |
-| Passed | 5 | ガイド間の整合、ローカルリンク、コード行数、構文、差分・要件書の保持 |
-| Not applicable | — | 書籍16本の移植・全実行、EXE・GPU検証 |
-
-- さらに以前の記録には、Excel・Polars・SciPy・PyTorch・Graphviz・Numba・PyMC／nutpie・ArviZの小規模検証があります。
-- PyMC／nutpieの条件：合成データ、各2 chains・400 tune・600 draws、`cores=1`、`random_seed=42`。
-- 記録された事後平均：0.287488／0.278773。解析解`2/7`との差は0.06未満。
-- Numbaの二乗和：338350。非JIT計算と絶対誤差1e-10以内で一致した記録があります。
-- これらの数値検証・ブラウザーHTTP起動の記録は、現在の再実行結果には含めません。
-- 小さな例の成功だけで、書籍全体のAPI互換性・収束・実行時間は保証できません。
+- 2026-09-26の環境準備と、2026-09-27の文章整理時の記録は、退避したREADMEに保全しています。
+- 以前の成功記録を、今回の変更後に再実行した結果として扱いません。
+- 以前の記録でも、VS Code画面の入力・保存・再読込・カーネル操作は未実施でした。
+- 書籍16本の移植・全実行、EXE・GPU検証は今回も対象外です。
 
 </details>

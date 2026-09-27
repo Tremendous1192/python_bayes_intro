@@ -1,17 +1,33 @@
 @echo off
 chcp 65001 >nul
 rem - 作成日: 2026-09-26
-rem - 更新日: 2026-09-27。説明を項目別に整理し、設定値と処理順を維持する。
+rem - 更新日: 2026-09-27。既存ウィンドウのターミナルとNotebookに設定する。
 
 rem - 目的: uvとNotebookの保存先・実行系・並列数を、この学習環境に揃える。
 
-rem - 役割: ターミナルとVS Code起動処理が共有する、環境変数設定の原本。
+rem - 役割: uv操作と専用.venvが共有する、環境変数設定値の原本。
 
-rem - 使用方法: VS CodeのCommand Promptで call env.cmd を実行する。
+rem - 使用方法: call env.cmd。同期後は call env.cmd configure でNotebookへ登録する。
+
+rem - 確認・解除: call env.cmd check / call env.cmd unconfigure。既存カーネルは先に停止する。
 
 rem - 制約: この配置のWindows 11 AMD64専用。設定は呼出元と子プロセスに有効。
 
-rem - 非対応: グローバル設定変更、環境導入、EXE・GPU・condaとの混用。
+rem - 非対応: VS Code起動、認証変更、環境の自動導入、EXE・GPU・condaとの混用。
+
+rem - 引数の誤りでは設定を変更せず、利用できる操作だけを案内する。
+if not "%~2"=="" goto :usage
+rem - 引数なしは現在のターミナルの設定だけを行う。
+if "%~1"=="" goto :settings
+rem - 登録・確認・解除以外の操作は実行しない。
+if /i "%~1"=="configure" goto :settings
+rem - checkは登録内容を変更せず確認する。
+if /i "%~1"=="check" goto :settings
+rem - unconfigureは所有する登録だけを解除する。
+if /i "%~1"=="unconfigure" goto :settings
+goto :usage
+
+:settings
 
 rem - 誤った配置から別プロジェクトの環境を変更しないよう、対象を限定する。
 if /i not "%~dp0"=="C:\dev\python_bayes_intro\marimo\2026\" (
@@ -48,12 +64,10 @@ set "PYTHONNOUSERSITE=1"
 set "PYTHONDONTWRITEBYTECODE=1"
 set "PYTHONUSERBASE=%BAYES_PROJECT%\.cache\python-user"
 
-rem - 一時ファイルとWindowsの個人領域参照を、呼出元プロセス内だけで切り替える。
+rem - ターミナルの個人領域は維持し、Notebookの個人領域だけを別途指定する。
 set "TEMP=%BAYES_PROJECT%\.cache\tmp"
 set "TMP=%TEMP%"
-set "USERPROFILE=%BAYES_PROJECT%\.cache\profile"
-set "APPDATA=%USERPROFILE%\AppData\Roaming"
-set "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
+set "BAYES_RUNTIME_PROFILE=%BAYES_PROJECT%\.cache\profile"
 
 rem - 描画、JIT、データ、marimo設定の書込先をプロジェクト内に限定する。
 set "MPLCONFIGDIR=%BAYES_PROJECT%\.cache\matplotlib"
@@ -79,7 +93,7 @@ set "NUMBA_NUM_THREADS=2"
 set "POLARS_MAX_THREADS=2"
 
 rem - 初回だけ必要な保存先を作り、作成できなければ後続操作を停止する。
-for %%D in ("%TEMP%" "%APPDATA%" "%LOCALAPPDATA%") do (
+for %%D in ("%TEMP%" "%BAYES_RUNTIME_PROFILE%\AppData\Roaming" "%BAYES_RUNTIME_PROFILE%\AppData\Local") do (
     rem - 既存ディレクトリを維持し、不足する親ディレクトリもまとめて作る。
     if not exist "%%~D" mkdir "%%~D"
     rem - 作成失敗を見逃して既定の個人領域へ書き込むことを防ぐ。
@@ -88,4 +102,22 @@ for %%D in ("%TEMP%" "%APPDATA%" "%LOCALAPPDATA%") do (
         exit /b 1
     )
 )
-exit /b 0
+rem - 環境未作成の初回でも、uvによる準備に使える設定を正常に返す。
+if "%~1"=="" exit /b 0
+rem - 自動インストールを避け、利用者による同期を案内する。
+if not exist "%BAYES_PROJECT%\.venv\Scripts\python.exe" (
+    echo ERROR: Prepare the environment with HowToUse_uv.md, then run call env.cmd configure.
+    exit /b 1
+)
+rem - 登録器が欠けた配置では、不完全な初期化を行わない。
+if not exist "%BAYES_PROJECT%\configure_runtime.py" (
+    echo ERROR: configure_runtime.py is missing. Restore the project files.
+    exit /b 1
+)
+rem - -Sで古い登録を読まずに修復・解除し、-Iと-Bで外部設定とpycを抑止する。
+"%BAYES_PROJECT%\.venv\Scripts\python.exe" -I -B -S "%BAYES_PROJECT%\configure_runtime.py" %1
+exit /b %errorlevel%
+
+:usage
+echo ERROR: Usage: call env.cmd [configure^|check^|unconfigure]
+exit /b 2
