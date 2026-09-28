@@ -1,13 +1,17 @@
 # uv利用手順
 
 - VS Codeの現在のウィンドウで、Pythonとライブラリを準備します。
-- 作成日：2026-09-26。更新日：2026-09-27。
+- 作成日：2026-09-26。更新日：2026-09-28。
 - 対象：Windows 11 AMD64、GIL付きCPython 3.14.7、uv 0.11.7。
-- 初回は第1～4節、準備済みなら第5節から始めます。
+- 初回は第0～4節、準備済みなら第5節から始めます。別のフォルダへの流用は第8節を参照します。
 
-## 0. 仮想環境(venv)を作成するフォルダをルートフォルダとする
-1. `File` タブの `Open Folder` で仮想環境(venv)を作成するフォルダを開く。
-   * `C:\dev\python_bayes_intro\marimo>`
+## 0. 作業フォルダを開く
+
+1. VS Codeの`File: Open Folder`で、`.venv`を作成する`C:\dev\python_bayes_intro\marimo`を開きます。
+2. 親フォルダを開いている場合は、`File: Add Folder to Workspace`で対象の`marimo`フォルダを現在のウィンドウへ追加します。
+
+- 子フォルダの`.vscode/settings.json`は、親だけを開いた状態では自動適用されません。
+- ワークスペースを保存する場合は、`C:\dev\python_bayes_intro\marimo\log\`以下へ保存し、既存ファイルを上書きしません。
 
 ## 1. 現在のターミナルを準備する
 
@@ -25,9 +29,8 @@ g++ --version
 - 各コマンドの成功を確認してから次へ進みます。
 - uv・Graphviz本体の`dot`・MinGWの`g++`は導入済みのものを使います。
 - `env.cmd`は保存先などを設定します。Python・ライブラリを自動導入しません。
-- ターミナルの`USERPROFILE`・`APPDATA`・`LOCALAPPDATA`を変更しません。
+- ターミナルの`USERPROFILE`・`APPDATA`・`LOCALAPPDATA`と、VS Codeの既存ログイン・ユーザー設定・拡張機能を維持します。
 - 旧手順を実行済みのターミナルは閉じ、同じウィンドウで新しいCommand Promptを開いて移行します。
-- VS Codeの既存ログイン・ユーザー設定・拡張機能を使います。
 - このターミナルを閉じると、ターミナルへ適用した環境変数は終了します。
 
 | 保存先・設定 | 役割 |
@@ -75,7 +78,7 @@ set "UV_PYTHON_DOWNLOADS=never"
 
 ## 3. ライブラリとNotebookの設定を揃える
 
-1. 同じターミナルで次を順に実行します。
+1. この`.venv`を使うNotebookカーネルを停止し、同じターミナルで次を順に実行します。
 2. 失敗した場合は次へ進まず、表示された案内を確認します。
 
 ```cmd
@@ -85,45 +88,31 @@ call env.cmd configure
 call env.cmd check
 ```
 
-- `configure`は専用`.venv`に起動時設定を登録し、新規Pythonで反映を確認します。
-- 登録処理と回帰テストは[env.cmd](env.cmd)に内蔵しています。登録処理は標準ライブラリだけを使います。
+- `configure`は初回・`.venv`再作成後・`env.cmd`変更後に実行します。専用`.venv`に起動時設定を登録し、新規Pythonで反映を確認します。
+- 設定の原本と登録処理・回帰テストは[env.cmd](env.cmd)にまとめています。生成物は手編集しません。
 - 登録後の検証は`call env.cmd test`です。試験用ファイルは`log/_work/`に限定します。
 - `check`は現在の`env.cmd`と登録内容の一致を確認します。
 - `--locked`は依存定義とロックの不一致をエラーにします。`--frozen`で回避しません。
 - `--group notebook`はmarimoなどのNotebook用依存を含めます。
-- 初回・`.venv`再作成後・`env.cmd`変更後は`configure`を実行します。
-- 設定変更・解除の前に、この`.venv`を使うNotebookカーネルを停止します。
-- 設定値の原本は`env.cmd`です。生成物は手編集しません。
-
-## 3.5. `.venv` のあるフォルダをルートフォルダにしていれば marimo 拡張機能でノートブックを編集する
-1. marimoのインポートと起動ができるようになっていれば、`.py`ファイル右上のボタンからノートブックに切り替えることができる。
-1. Jupyter Notebookと同様にKernelを選択して各セルを編集して、Runすればプログラムを実行できる。
-
+- 登録後はNotebookカーネルを起動し直します。
 
 ## 4. 同じウィンドウでNotebookを準備する
 
-1. 対象の`marimo`フォルダがワークスペースのルートとして表示されていることを確認します。
-   - 親の`C:\dev`などを開いている場合は、`File: Add Folder to Workspace`で`C:\dev\python_bayes_intro\marimo`を現在のウィンドウへ追加します。
-   - 子フォルダの`.vscode/settings.json`は、親だけを開いた状態では自動適用されません。
-   - ワークスペースを保存する場合は`C:\dev\python_bayes_intro\marimo\log\`以下へ保存し、既存ファイルを上書きしません。
-2. 現在のウィンドウで公式拡張機能`marimo-team.vscode-marimo`とMicrosoft Pythonの有効化を確認します。
+1. 現在のウィンドウで公式拡張機能`marimo-team.vscode-marimo`とMicrosoft Pythonの有効化を確認します。
    - 確認対象のmarimo拡張機能は0.18.1です。更新・追加導入は自動実行しません。
    - フォルダの信頼確認が出た場合は、自分の学習用フォルダとして確認します。
-3. marimoの言語サーバーは既定の`wasm`を使います。
+2. marimoの言語サーバーは既定の`wasm`を使います。
    - 以前に別設定へ変更していた場合は、ウィンドウの設定で`marimo.lsp.server`を確認します。
-4. [marimo利用手順](HowToUse_marimo.md)に従い、Notebookのカーネルに次を選びます。
+3. [marimo利用手順](HowToUse_marimo.md)に従ってNotebookを開き、カーネルに次を選びます。セルの編集・実行・保存も同手順を参照します。
 
 ```text
 C:\dev\python_bayes_intro\marimo\.venv\Scripts\python.exe
 ```
 
-- 別ウィンドウ・専用ユーザーデータ領域の作成は不要です。
-- ターミナルの`set`を拡張機能へ遡って反映する方式ではありません。
-- 選択したPythonが起動フックを読み、Notebook用の設定を適用します。
+- Notebook用の設定は、選択したPythonの起動フックで適用します。ターミナルの`set`を拡張機能へ遡って反映する方式ではありません。
 - `PYTHONUTF8`は起動済みPythonのモードを変更しません。拡張機能の中継プロセスから起動される子カーネルへの継承を確認しています。
 - `-S`は登録器の修復用です。Notebook実行には使いません。
 - `PYTHONHOME`・`PYTHONPATH`で別Pythonを指定したウィンドウは対象外です。uv自身の正当な`PYTHONHOME`は検証して許可します。
-- `env.cmd`変更後は再登録し、Notebookカーネルを起動し直します。
 - 設定・環境の候補が更新されない場合だけ、保存後に同じウィンドウで`Developer: Reload Window`を使います。
 
 ## 5. 毎日の操作
@@ -186,6 +175,24 @@ call env.cmd unconfigure
 - 再登録は`call env.cmd configure`です。解除中はNotebookを実行しません。
 - **`.cache/python/`にはPython本体があります。`.cache`全体を削除しないでください。**
 - 環境だけを復元する場合は第1～3節に従います。Notebookと退避内容を保全します。
+
+## 8. 別のフォルダへ流用する
+
+- 対象は同じWindows 11 AMD64・GIL付きCPython 3.14.7のNotebook環境です。Python版・依存・`.venv`と`.cache`の構成は維持します。
+- 移植先は`C:\dev\`配下とし、以下では`C:\dev\my_marimo`を例にします。元の環境を残し、コピー先の[env.cmd](env.cmd)にある4か所を同じ移植先へ揃えます。
+- `BAYES_PROJECT`だけを変更すると、バッチとPython側の配置チェックで停止します。
+
+| 箇所・検索する文字列 | 移植先の設定例 | 注意点 |
+| --- | --- | --- |
+| `if /i not "%~dp0"==`の比較先 | `C:\dev\my_marimo\` | 末尾の`\`を残す |
+| `set "BAYES_PROJECT=..."` | `C:\dev\my_marimo` | 末尾の`\`は付けない |
+| `set "PYTENSOR_FLAGS=..."` | `base_compiledir=C:/dev/my_marimo/.cache/pytensor` | 区切りは`/`、`base_compiledir=`を残す |
+| `validate_runtime()`内の`ROOT != Path(...)` | `Path("C:/dev/my_marimo")` | 同じ移植先を`/`区切りで指定する |
+
+- `%BAYES_PROJECT%`から組み立てる保存先は変更に追従します。配置チェックは削除せず、比較先を変更します。
+- `.python-version`・`pyproject.toml`・`uv.lock`も移植先に用意します。`.venv`と登録済み起動フックはコピーして使わず、移植先で作成・登録します。
+- 第0～4節のパスを移植先へ読み替え、Python本体の準備、環境同期、`call env.cmd configure`、`call env.cmd check`を行います。登録後は`call env.cmd test`を実行し、移植先の`.venv\Scripts\python.exe`をカーネルに選びます。
+- この4か所は環境設定の配置指定です。Notebookやデータ準備コードにある固有パス・入力データは、流用する内容に応じて別途確認します。
 
 ## 参考資料
 
