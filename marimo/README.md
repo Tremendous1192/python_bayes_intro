@@ -3,9 +3,9 @@
 - 書籍『Pythonでスラスラわかる ベイズ推論「超」入門』を、VS Code・uv・marimoで学ぶための環境です。
 - 現在のVS Codeウィンドウとログイン状態を使い、プロジェクト専用のPythonで実行します。
 - 書籍の本編11本・参考4本、計15本の学習内容を`notebooks/`へ移植しています。
-- 作成日：2026-09-26。更新日：2026-09-27。
+- 作成日：2026-09-26。更新日：2026-09-28。
 - 登録処理統合の8 Taskの状態・実行結果は[統合検証](log/統合検証.md)を参照します。過去の移植記録と区別しています。
-- データ準備の統合とテスト移動は[追加の検証記録](log/データ統合とテスト移動.md)を参照します。
+- データ準備の統合・分離とテスト移動の履歴は[追加の検証記録](log/データ統合とテスト移動.md)を参照します。
 
 ## まずはここから
 
@@ -33,14 +33,15 @@ call env.cmd check
 
 ## フォルダの中身
 
-- 対象：`/python_bayes_intro/marimo/`。Notebook用テストは`tests/`、その他の追加補助ファイル・検証記録は`log/`へ配置し、直下のファイル数を増やしません。
+- 対象：`/python_bayes_intro/marimo/`。データ準備は`data/`、Notebook用テストは`tests/`、その他の追加補助ファイル・検証記録は`log/`へ配置し、直下のファイル数を増やしません。
 
 | ファイル・フォルダ | 役割 |
 | --- | --- |
 | [pyproject.toml](pyproject.toml) | Pythonの対応範囲と直接依存の原本 |
 | [.python-version](.python-version) | 使用するPythonのパッチ版 |
 | [uv.lock](uv.lock) | uvが生成した依存・配布物の固定情報 |
-| [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除・回帰テスト、データ準備 |
+| [env.cmd](env.cmd) | 設定値の原本、ターミナル設定、登録・確認・解除・回帰テスト |
+| [data/prepare_data.py](data/prepare_data.py) | 固定CSVの検査と、明示指定時だけの不足分取得 |
 | [log/](log/) | データ検証コード・検証記録・画像 |
 | [.vscode/settings.json](.vscode/settings.json) | Python候補・marimoの共有設定 |
 | [examples/basic_usage.py](examples/basic_usage.py) | 平均・表・図・ボタンの8セルの例 |
@@ -62,13 +63,13 @@ call env.cmd check
 
 - ターミナル：`call env.cmd`が、呼出元と子プロセスにuv用の設定を適用します。
 - Notebook：選択した専用`.venv`が、Python起動時に登録済み設定を読みます。
-- 登録処理・回帰テスト・データ準備は`env.cmd`の埋込Pythonに統合しています。
+- 登録処理・回帰テストは`env.cmd`の埋込Pythonに統合しています。データ準備は`data/prepare_data.py`を直接実行します。
 - 起動フックは拡張機能から起動される専用Pythonへ設定を適用します。
 - Notebook専用Pythonでは、個人領域参照もプロジェクト内へ切り替えます。
 - ターミナルとVS Code本体の個人領域・ログイン状態は切り替えません。
 - この.venvの全Python起動に設定が適用されます。他用途の環境と共用しません。
 - 起動後の設定だけではUTF-8モードを変更できません。中継プロセスから子カーネルへの継承を検証します。
-- `env.cmd`の埋込Pythonは`-S`で起動フックを読みません。登録の修復や標準ライブラリだけのデータ準備に使います。
+- `env.cmd`の埋込Pythonは`-S`で起動フックを読みません。登録の修復に使います。
 
 | 生成物 | 原本・生成方法 |
 | --- | --- |
@@ -177,7 +178,8 @@ call env.cmd check
 ### データ準備と実行
 
 - 同梱のCSVを使い、Notebookの読込時にハッシュを検証します。既存CSVのCRLFはメモリ上でLFへ戻して照合します。
-- `call env.cmd prepare-data`は3本を検査し、`--download`を付けた場合だけ不足分を取得します。
+- 設定済みターミナルで`uv run --locked --offline --group notebook python data/prepare_data.py`を実行すると3本を検査し、`--download`を付けた場合だけ不足分を取得します。
+- `--offline`はuvによる依存取得を禁止します。スクリプトの`--download`を付けた場合のCSV取得は別に許可されます。
 - CSVの再取得が必要な場合だけ、[データ手順](data/README.md)の保守用コマンドを使います。
 - ハッシュ不一致は自動上書きしません。Notebookも不一致を検出して停止します。
 - 対応表の`.py`をVS Codeのmarimo拡張機能で開き、登録済み`.venv`を選びます。

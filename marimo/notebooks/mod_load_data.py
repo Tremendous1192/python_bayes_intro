@@ -1,7 +1,7 @@
 # - 作成日: 2026-09-27
 # - 目的: 各章で共用する教材データの版と型を確認して読む。
 # - 役割: 複数Notebookでの取得・型・検査の食い違いを防ぐNotebook専用処理。
-# - 使用: load_data("iris.csv")。再取得は call env.cmd prepare-data --download で行う。
+# - 使用: load_data("iris.csv")。再取得は専用環境で python data/prepare_data.py --download を使う。
 # - 制約: data/sources.jsonの3本のみ。読取専用、通信なし。
 # - 非対応: 任意CSV、依存導入、EXE配布。
 import hashlib
@@ -26,7 +26,10 @@ def load_data(name: str) -> pd.DataFrame:
     path = DATA_ROOT / name
     # - オフライン時も操作方法を英語で示し、自動取得しない。
     if not path.is_file():
-        raise FileNotFoundError("Run call env.cmd prepare-data --download from the project root.")
+        raise FileNotFoundError(
+            "Run uv run --locked --offline --group notebook python data/prepare_data.py "
+            "--download from the project root."
+        )
     # - GitのCRLF変換だけをメモリ上で戻し、データ値の改変は固定ハッシュで拒否する。
     if hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() != sources[name]["sha256"]:
         raise ValueError(f"Checksum mismatch: {name}")

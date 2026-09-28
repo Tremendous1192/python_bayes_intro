@@ -1,4 +1,4 @@
-- 作成日：2026-09-27。
+- 作成日：2026-09-27。更新日：2026-09-28。
 - 目的：15本の教材で使用する入力を固定し、Notebookの実行中に取得しない。
 - 原本：`sources.json`に固定コミットのURLとSHA-256を記録する。
 - Iris：Seabornの公開教材、150行・4数値列・3種。
@@ -6,15 +6,22 @@
 - IRT：書籍Notebookと同じ公開サンプル、1,000人・50問の二値回答。
 - 出典・配布条件は各取得元を参照する。再配布条件を新たに付与するものではない。
 - 通常は同梱CSVを使い、Notebookの読込時にハッシュを検証する。
-- 再取得：CSVが不足した場合だけ、プロジェクトの設定済みCommand Promptで次を実行する。
+- 検査：環境準備済みのCommand Promptで次を実行する。データ準備は[prepare_data.py](prepare_data.py)が担当し、`env.cmd`の操作から分離している。
 
 ```cmd
 cd /d C:\dev\python_bayes_intro\marimo
-call env.cmd prepare-data --download
+call env.cmd
+uv run --locked --offline --group notebook python data/prepare_data.py
 ```
 
-- 取得済みの場合はハッシュを確認し、上書きしない。
-- 検査だけの場合は`call env.cmd prepare-data`を実行する。取得処理は`env.cmd`内に統合している。
+- 再取得：CSVが不足した場合だけ、同じターミナルで次を実行する。
+
+```cmd
+uv run --locked --offline --group notebook python data/prepare_data.py --download
+```
+
+- `--offline`はuvの依存取得を禁止する。CSVの通信はスクリプトの`--download`で明示的に許可する。
+- 取得済みの場合はハッシュを確認し、上書きしない。スクリプトと同じフォルダの`sources.json`・CSVを使う。
 - 通信は各ファイル30秒、応答サイズは2MB以下に制限する。
 - 取得失敗時は原因を解消して同じコマンドを実行する。既存ファイルは保持される。
 - ハッシュ不一致時はファイルを保存したまま原因を確認する。自動削除・更新はしない。
